@@ -13,5 +13,7 @@ minio:
   accessKey: minioadmin
   secretKey: minioadmin
   bucket: "test"
+URL: http://127.0.0.1:8080
+
 
 
