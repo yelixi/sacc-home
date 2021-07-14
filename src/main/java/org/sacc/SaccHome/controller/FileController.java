@@ -3,9 +3,9 @@ import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
 
-import org.sacc.SaccHome.APi.CommonResult;
-import org.sacc.SaccHome.Util.fileUtil;
-import org.sacc.SaccHome.service.Impl.fileServiceImpl;
+import org.sacc.SaccHome.api.CommonResult;
+import org.sacc.SaccHome.util.FileUtil;
+import org.sacc.SaccHome.service.Impl.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +26,8 @@ public class FileController {
     private MinioClient minioClient;
 
     @Autowired
-    private fileServiceImpl fileService;
-    private fileUtil fileutil = new fileUtil();
+    private FileServiceImpl fileService;
+    private FileUtil fileutil = new FileUtil();
     /**
      * 文件上传
      * @param file

@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Map;
 
-public interface fileService {
+public interface FileService {
     boolean Upload(MultipartFile file, @PathVariable("bucketname") String bucketname, MinioClient minioClient) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
     boolean Download(@PathVariable("filename") String filename, @PathVariable("bucketname") String bucketname, MinioClient minioClient, HttpServletResponse resp) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
     boolean Remove(@PathVariable("filename") String filename,@PathVariable("bucketname") String bucketname,MinioClient minioClient) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
