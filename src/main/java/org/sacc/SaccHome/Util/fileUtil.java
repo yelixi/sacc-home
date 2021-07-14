@@ -1,4 +1,4 @@
-package org.sacc.SaccHome.Util;
+package org.sacc.SaccHome.util;
 
 import io.minio.BucketExistsArgs;
 import io.minio.ListObjectsArgs;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-public class fileUtil {
+public class FileUtil {
     /**
      * 判断bucket是否存在
      * @param bucketname

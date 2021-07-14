@@ -33,8 +33,8 @@ public class FileController {
      * @param file
      * @param bucketname
      */
-    @PostMapping(value = "/upload/{bucketname}",produces = "application/json")
-    public CommonResult upLoad(MultipartFile file,@PathVariable("bucketname") String bucketname){
+    @PostMapping(value = "/upload")
+    public CommonResult upLoad(@RequestParam String bucketname ,MultipartFile file){
             try {
                 //如果桶不存在就创造一个桶
                 if (bucketname.length() < 3) {
@@ -56,8 +56,8 @@ public class FileController {
      * @param filename
      * @param bucketname
      */
-    @GetMapping(value = "/download/{bucketname}/{filename}",produces = "application/json")
-    public CommonResult downLoad(@PathVariable("filename") String filename, @PathVariable("bucketname") String bucketname, HttpServletResponse resp) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    @GetMapping(value = "/download")
+    public CommonResult downLoad(@RequestParam String bucketname, @RequestParam String filename, HttpServletResponse resp) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         if(!fileutil.isbucketexist(bucketname,minioClient))
         {
             return CommonResult.failed("未找到" + bucketname+" bucket" );
@@ -85,8 +85,8 @@ public class FileController {
      * @param filename
      * @param bucketname
      */
-    @DeleteMapping(value = "/remove/{bucketname}/{filename}",produces = "application/json")
-    public CommonResult reMove(@PathVariable("filename") String filename,@PathVariable("bucketname") String bucketname) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    @DeleteMapping(value = "/remove")
+    public CommonResult reMove(@RequestParam String bucketname, @RequestParam String filename) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         if(!fileutil.isbucketexist(bucketname,minioClient))
         {
             return CommonResult.failed("未找到" + bucketname+" bucket" );
@@ -121,8 +121,8 @@ public class FileController {
      * @throws XmlParserException
      * @throws InternalException
      */
-    @GetMapping(value = "/list/{bucketname}",produces = "application/json")
-    public ArrayList<Map<String,String>> list(@PathVariable("bucketname") String bucketname) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    @GetMapping(value = "/list")
+    public ArrayList<Map<String,String>> list(@RequestParam String bucketname) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         return fileService.List(bucketname,minioClient);
     }
 
