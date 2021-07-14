@@ -1,21 +1,25 @@
-package org.sacc.SaccHome.APi;
+package org.sacc.SaccHome.api;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.sacc.SaccHome.enums.ResultCode;
 
 /**
  * 通用返回对象
  * Created by macro on 2019/4/19.
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommonResult<T> {
     private long code;
     private String message;
     private T data;
 
-    protected CommonResult() {
-    }
-
-    protected CommonResult(long code, String message, T data) {
+    public CommonResult(long code, String message) {
         this.code = code;
         this.message = message;
-        this.data = data;
     }
 
     /**
@@ -39,10 +43,10 @@ public class CommonResult<T> {
 
     /**
      * 失败返回结果
-     * @param errorCode 错误码
+     * @param resultCode 错误码
      */
-    public static <T> CommonResult<T> failed(IErrorCode errorCode) {
-        return new CommonResult<T>(errorCode.getCode(), errorCode.getMessage(), null);
+    public static <T> CommonResult<T> failed(ResultCode resultCode) {
+        return new CommonResult<T>(resultCode.getCode(), resultCode.getMessage(), null);
     }
 
     /**
@@ -89,27 +93,18 @@ public class CommonResult<T> {
         return new CommonResult<T>(ResultCode.FORBIDDEN.getCode(), ResultCode.FORBIDDEN.getMessage(), data);
     }
 
-    public long getCode() {
-        return code;
+    /**
+     * 出现异常时的返回结果
+     */
+    public static <T> CommonResult<T> error(ResultCode resultCode){
+        return new CommonResult<T>(resultCode.getCode(),resultCode.getMessage());
     }
 
-    public void setCode(long code) {
-        this.code = code;
+    /**
+     * 出现异常时的返回结果
+     */
+    public static <T> CommonResult<T> error(long code,String message){
+        return new CommonResult<T>(code,message);
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
 }
