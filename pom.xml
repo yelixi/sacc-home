@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.sacc</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>sacc-home</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>SaccHome</name>
     <description>Home Page for SACC</description>
@@ -64,6 +64,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId> org.springframework.boot </groupId>
+            <artifactId> spring-boot-configuration-processor </artifactId>
+            <optional> true </optional>
         </dependency>
 
     </dependencies>

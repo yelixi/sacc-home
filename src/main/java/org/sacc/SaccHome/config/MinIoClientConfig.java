@@ -1,7 +1,7 @@
 package org.sacc.SaccHome.config;
 
 import io.minio.MinioClient;
-import org.sacc.SaccHome.Pojo.MinioProp;
+import org.sacc.SaccHome.pojo.MinioProp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

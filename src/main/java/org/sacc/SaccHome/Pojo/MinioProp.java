@@ -1,4 +1,4 @@
-package org.sacc.SaccHome.Pojo;
+package org.sacc.SaccHome.pojo;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
