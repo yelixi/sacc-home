@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.sacc.SaccHome.enums.ResultCode;
-
+/**
+ * Created by gwt
+ * Date 2021/7/14 16:40
+ */
 /**
  * 通用返回对象
  * Created by macro on 2019/4/19.

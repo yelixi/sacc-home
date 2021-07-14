@@ -3,12 +3,13 @@ package org.sacc.SaccHome.config;
 import io.minio.MinioClient;
 import org.sacc.SaccHome.pojo.MinioProp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
-
+/**
+ * Created by gwt
+ * Date 2021/7/14 16:40
+ */
 @Configuration
 public class MinIoClientConfig {
 

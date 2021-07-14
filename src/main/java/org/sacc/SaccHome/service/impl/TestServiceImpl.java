@@ -1,4 +1,4 @@
-package org.sacc.SaccHome.service.Impl;
+package org.sacc.SaccHome.service.impl;
 
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.exception.BusinessException;

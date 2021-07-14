@@ -1,4 +1,4 @@
-package org.sacc.SaccHome.Util;
+package org.sacc.SaccHome.util;
 
 import io.minio.BucketExistsArgs;
 import io.minio.ListObjectsArgs;

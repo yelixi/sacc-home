@@ -3,9 +3,9 @@ import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
 
-import org.sacc.SaccHome.APi.CommonResult;
-import org.sacc.SaccHome.Util.fileUtil;
-import org.sacc.SaccHome.service.Impl.fileServiceImpl;
+import org.sacc.SaccHome.api.CommonResult;
+import org.sacc.SaccHome.util.fileUtil;
+import org.sacc.SaccHome.service.impl.fileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 
+/**
+ * Created by gwt
+ * Date 2021/7/14 16:40
+ */
 @Slf4j
 @RestController
 public class FileController {

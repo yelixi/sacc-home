@@ -1,12 +1,10 @@
-package org.sacc.SaccHome.service.Impl;
+package org.sacc.SaccHome.service.impl;
 
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
-import org.sacc.SaccHome.APi.CommonResult;
-import org.sacc.SaccHome.Util.fileUtil;
+import org.sacc.SaccHome.util.fileUtil;
 import org.sacc.SaccHome.service.fileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +20,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Created by gwt
+ * Date 2021/7/14 16:40
+ */
 @Service
 public class fileServiceImpl implements fileService {
     private fileUtil fileutil = new fileUtil();
