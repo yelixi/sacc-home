@@ -1,15 +1,13 @@
 package org.sacc.SaccHome.enums;
 
+
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * 枚举了一些常用API操作码
- * Created by macro on 2019/4/19.
+ *  by weiwo 
  */
-@Getter
-@AllArgsConstructor
-public enum ResultCode {
+public enum ResultCode  {
     SUCCESS(200, "操作成功"),
 
     FAILED(500, "操作失败"),
@@ -30,9 +28,19 @@ public enum ResultCode {
 
     NOT_ZERO(1000,"非零")
     ;
+    private long code;
+    private String message;
 
-    private final long code;
+    private ResultCode(long code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
-    private final String message;
+    public long getCode() {
+        return code;
+    }
 
+    public String getMessage() {
+        return message;
+    }
 }
