@@ -3,10 +3,8 @@ package org.sacc.SaccHome.service.Impl;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
-import org.sacc.SaccHome.api.CommonResult;
-import org.sacc.SaccHome.Util.fileUtil;
-import org.sacc.SaccHome.service.fileService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.sacc.SaccHome.util.FileUtil;
+import org.sacc.SaccHome.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class fileServiceImpl implements fileService {
-    private fileUtil fileutil = new fileUtil();
+public class FileServiceImpl implements FileService {
+    private FileUtil fileutil = new FileUtil();
     @Value("${URL}")
     private String URL;
     /**
@@ -59,6 +57,24 @@ public class fileServiceImpl implements fileService {
                 return true;
 
     }
+
+    /**
+     * 下载文件
+     * @param filename
+     * @param bucketname
+     * @param minioClient
+     * @param resp
+     * @return
+     * @throws ServerException
+     * @throws InsufficientDataException
+     * @throws ErrorResponseException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws InvalidResponseException
+     * @throws XmlParserException
+     * @throws InternalException
+     */
     @Override
     public boolean Download(@PathVariable("filename") String filename, @PathVariable("bucketname") String bucketname, MinioClient minioClient, HttpServletResponse resp) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         if (fileutil.isfileexist(bucketname, filename,minioClient)) {
@@ -80,6 +96,22 @@ public class fileServiceImpl implements fileService {
             return false;
     }
 
+    /**
+     * 移除文件
+     * @param filename
+     * @param bucketname
+     * @param minioClient
+     * @return
+     * @throws ServerException
+     * @throws InsufficientDataException
+     * @throws ErrorResponseException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws InvalidResponseException
+     * @throws XmlParserException
+     * @throws InternalException
+     */
     @Override
     public boolean Remove(@PathVariable("filename") String filename,@PathVariable("bucketname") String bucketname,MinioClient minioClient) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         if (fileutil.isfileexist(bucketname, filename,minioClient)) {
@@ -91,6 +123,21 @@ public class fileServiceImpl implements fileService {
             return false;
     }
 
+    /**
+     * 列出url
+     * @param bucketname
+     * @param minioClient
+     * @return
+     * @throws ServerException
+     * @throws InsufficientDataException
+     * @throws ErrorResponseException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws InvalidResponseException
+     * @throws XmlParserException
+     * @throws InternalException
+     */
     @Override
     public ArrayList<Map<String, String>> List(@PathVariable("bucketname") String bucketname, MinioClient minioClient) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         if(!fileutil.isbucketexist(bucketname,minioClient))
