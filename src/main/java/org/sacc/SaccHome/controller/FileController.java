@@ -3,8 +3,9 @@ import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
 
-import org.sacc.SaccHome.APi.CommonResult;
+import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.Util.fileUtil;
+import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.service.Impl.fileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,7 +35,7 @@ public class FileController {
      * @param bucketname
      */
     @PostMapping(value = "/upload/{bucketname}",produces = "application/json")
-    public CommonResult upLoad(MultipartFile file,@PathVariable("bucketname") String bucketname){
+    public CommonResult upLoad(MultipartFile file, @PathVariable("bucketname") String bucketname){
             try {
                 //如果桶不存在就创造一个桶
                 if (bucketname.length() < 3) {

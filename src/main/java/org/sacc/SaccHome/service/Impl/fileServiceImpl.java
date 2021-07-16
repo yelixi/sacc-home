@@ -3,7 +3,7 @@ package org.sacc.SaccHome.service.Impl;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
-import org.sacc.SaccHome.APi.CommonResult;
+import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.Util.fileUtil;
 import org.sacc.SaccHome.service.fileService;
 import org.springframework.beans.factory.annotation.Autowired;
