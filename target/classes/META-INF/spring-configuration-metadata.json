@@ -1,0 +1,32 @@
+{
+  "groups": [
+    {
+      "name": "minio",
+      "type": "org.sacc.SaccHome.pojo.MinioProp",
+      "sourceType": "org.sacc.SaccHome.pojo.MinioProp"
+    }
+  ],
+  "properties": [
+    {
+      "name": "minio.access-key",
+      "type": "java.lang.String",
+      "sourceType": "org.sacc.SaccHome.pojo.MinioProp"
+    },
+    {
+      "name": "minio.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "org.sacc.SaccHome.pojo.MinioProp"
+    },
+    {
+      "name": "minio.fil-host",
+      "type": "java.lang.String",
+      "sourceType": "org.sacc.SaccHome.pojo.MinioProp"
+    },
+    {
+      "name": "minio.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "org.sacc.SaccHome.pojo.MinioProp"
+    }
+  ],
+  "hints": []
+}

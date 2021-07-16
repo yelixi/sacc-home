@@ -4,16 +4,8 @@ spring:
     url: jdbc:mysql://localhost:3306/sh?characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: root
-  servlet:
-    multipart:
-      max-request-size: 5GB  # 上传文件总的最大值 默认10MB
-      max-file-size: 1GB #单个文件最大值 默认10MB
-minio:
-  endpoint: http://192.168.0.103:9000
-  accessKey: minioadmin
-  secretKey: minioadmin
-  bucket: "test"
-URL: http://127.0.0.1:8080
 
-
+mybatis:
+  type-aliases-package: org.sacc.SaccHome.mbg.model
+  mapper-locations: classpath:mapper/*.xml
 

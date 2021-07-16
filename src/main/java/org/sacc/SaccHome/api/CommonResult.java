@@ -7,7 +7,7 @@ import org.sacc.SaccHome.enums.ResultCode;
 
 /**
  * 通用返回对象
- * Created by macro on 2019/4/19.
+ * Created by weiwo
  */
 @Data
 @AllArgsConstructor
