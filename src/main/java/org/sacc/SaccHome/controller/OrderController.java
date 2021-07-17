@@ -1,6 +1,7 @@
 package org.sacc.SaccHome.controller;
 
 
+import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.pojo.Order;
 import org.sacc.SaccHome.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,17 @@ public class OrderController {
     private OrderService orderService;
 
     /**
-     * 查找七天内的预约
+     * 查询七天内的预约
      * @return
      */
     @RequestMapping ("/getOrder")
     @ResponseBody
-    public List<Order> findNextWeek(){
+    public CommonResult<List<Order>> findNextWeek(){
         List<Order> order=orderService.findNextWeek();
         if(CollectionUtils.isEmpty(order)){
-            return null;
+            return CommonResult.success(null,"最近七天内无预约");
         }else{
-            return order;
+            return CommonResult.success(order);
         }
     }
 
@@ -37,11 +38,16 @@ public class OrderController {
      * @return
      */
     @GetMapping("/applyOrder")
-    public Order save(Order order){
+    public CommonResult <Order> save(Order order){
         Timestamp time = Timestamp.valueOf(LocalDateTime.now());
         order.setCreated_at(time);
         order.setUpdated_at(time);   //设置当前的时间
-        return orderService.save(order);
+        Order save=orderService.save(order);
+        if(save!=null){
+            return CommonResult.success(save,"新增预约成功");
+        }else{
+            return CommonResult.failed("新增预约失败");
+        }
     }
 
 }

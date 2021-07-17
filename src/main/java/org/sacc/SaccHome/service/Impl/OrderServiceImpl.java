@@ -21,6 +21,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order){
         int save= ordermapper.save(order);
-        return order;
+        if(save==1){
+            return order;
+        }else{
+            return null;
+        }
     }
 }

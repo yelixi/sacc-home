@@ -1,0 +1,38 @@
+package org.sacc.SaccHome.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * 枚举了一些常用API操作码
+ * Created by macro on 2019/4/19.
+ */
+@Getter
+@AllArgsConstructor
+public enum ResultCode {
+    SUCCESS(200, "操作成功"),
+
+    FAILED(500, "操作失败"),
+
+    INTERNAL_SERVER_ERROR(500, "服务器内部错误!"),
+
+    NULL_POINT(500,"空指针异常"),
+
+    VALIDATE_FAILED(404, "参数检验失败"),
+
+    UNAUTHORIZED(401, "暂未登录或token已经过期"),
+
+    FORBIDDEN(403, "没有相关权限"),
+
+    UNSUPPORTED_MEDIA_TYPE(415,"请求的数据格式不符!"),
+
+    BAD_REQUEST(400,"错误请求"),
+
+    NOT_ZERO(1000,"非零")
+    ;
+
+    private final long code;
+
+    private final String message;
+
+}
