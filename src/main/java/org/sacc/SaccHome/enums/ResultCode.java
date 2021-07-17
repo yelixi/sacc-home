@@ -26,7 +26,16 @@ public enum ResultCode  {
 
     BAD_REQUEST(400,"错误请求"),
 
-    NOT_ZERO(1000,"非零")
+    NOT_ZERO(1000,"非零"),
+
+    WRONG_PASSWORD(405,"密码错误"),
+
+    FAILED_VERIFICATION(406,"未通过验证"),
+
+    EMAIL_SENDING_ABNORMAL(407,"邮件发送错误")
+
+
+
     ;
     private long code;
     private String message;
