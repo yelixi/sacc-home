@@ -2,6 +2,7 @@ package org.sacc.SaccHome.service.Impl;
 
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.exception.AuthenticationException;
+import org.sacc.SaccHome.exception.BusinessException;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
@@ -39,11 +40,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateEmailByUsername(String username, String email) {
-        //如果redis中有对应的key，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
-        if (redisTemplate.hasKey(username)) {
+        //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
+        String value = null;
+        try {
+            value = (String) redisTemplate.opsForValue().get(username);
+        } catch (Exception e) {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
-        } else {
+        }
+        if (value.equals("true")) {
             userMapper.updateEmailByUsername(username, email);
+        } else {
+            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
     }
 
@@ -59,20 +66,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void forgetPassword(String username, String password) {
-        //如果redis中有对应的key，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
-        if (redisTemplate.hasKey(username)) {
+        String value = null;
+        try {
+            value = (String) redisTemplate.opsForValue().get(username);
+        } catch (Exception e) {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
-        } else {
+        }
+        //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
+        if (value.equals("true")) {
+            //todo 等密码加密方式
             userMapper.updatePasswordByUsername(username, password);
+        } else {
+            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
     }
 
     @Override
     public boolean judgeVerificationCode(String username, String inputVerificationCode) {
-        String LocalVerificationCode = (String) redisTemplate.opsForValue().get(username);
-        if (LocalVerificationCode == inputVerificationCode) {
+        String LocalVerificationCode = null;
+        try {
+            LocalVerificationCode = (String) redisTemplate.opsForValue().get(username);
+        } catch (Exception e) {
+            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
+        }
+        if (LocalVerificationCode.equals(inputVerificationCode)) {
             //删除相应的key并返回true
-            redisTemplate.delete(username);
+            redisTemplate.opsForValue().set(username, "true", 1, TimeUnit.HOURS);
             return true;
         }
         return false;

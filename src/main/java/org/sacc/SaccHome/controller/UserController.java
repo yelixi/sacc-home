@@ -41,6 +41,6 @@ public class UserController {
 
     @PutMapping("/updatePassword")
     public void updatePassword(String username, String oldPassword, String newPassword){
-
+        userService.updatePasswordByUsername(username,oldPassword,newPassword);
     }
 }
