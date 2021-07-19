@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.mbg.model.UserExample;
+import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
@@ -33,7 +34,10 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     String getEmailByUsername(@Param("username") String username);
+
     void updateEmailByUsername(@Param("username") String username,@Param("email")String email);
+
     void updatePasswordByUsername(@Param("username") String username,@Param("password")String password);
+
     String findPasswordByUsername(@Param("username") String username);
 }
