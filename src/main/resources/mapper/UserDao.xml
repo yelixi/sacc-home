@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sacc.SaccHome.mbg.mapper.UserDao">
+    <resultMap id="BaseResultMap" type="org.sacc.SaccHome.mbg.model.User">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="role" jdbcType="VARCHAR" property="role" />
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    </resultMap>
+
+<select id="getUsersByFileTask" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+     select *
+     from user
+     left join file on file.user_id = user.id
+     left join file_task on file.file_task_id = file_task.id
+     where file_task.id =#{id,jdbcType=INTEGER}
+
+</select>
+
+</mapper>
