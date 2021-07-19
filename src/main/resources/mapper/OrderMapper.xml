@@ -22,4 +22,15 @@
         INSERT INTO `order` (start_time,end_time,number,name_list,user_id,created_at,updated_at)
         VALUES (#{start_time},#{end_time},#{number},#{name_list},#{user_id},current_timestamp(),current_timestamp());
     </insert>
+
+    <!--查询是否存在重复的时间段-->
+    <select id="judgeTimeCorrect" parameterType="org.sacc.sacchome.entity.Order" resultMap="BaseResultMap">
+        SELECT * FROM `order` WHERE
+            (start_time &gt;= #{start_time} AND start_time &lt; #{end_time}) OR
+            (start_time &lt;= #{start_time} AND end_time &gt;= #{end_time}) OR
+            (end_time &gt;= #{start_time} AND end_time &lt;= #{end_time})
+    </select>
 </mapper>
+
+
+
