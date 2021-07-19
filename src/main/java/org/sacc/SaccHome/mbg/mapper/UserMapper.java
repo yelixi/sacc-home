@@ -8,6 +8,7 @@ import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.mbg.model.UserExample;
 
 @Mapper
+@Repository
 public interface UserMapper {
     long countByExample(UserExample example);
 
@@ -30,4 +31,9 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    String getEmailByUsername(@Param("username") String username);
+    void updateEmailByUsername(@Param("username") String username,@Param("email")String email);
+    void updatePasswordByUsername(@Param("username") String username,@Param("password")String password);
+    String findPasswordByUsername(@Param("username") String username);
 }

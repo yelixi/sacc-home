@@ -11,4 +11,15 @@ public interface UserService {
 
     List<User> getUsersByFileTask(Integer id);
 
+    String getEmailByUsername(String username);
+
+    void updateEmailByUsername(String username, String email);
+
+    void updatePasswordByUsername(String username, String oldPassword, String newPassword);
+
+    void forgetPassword(String username,String password);
+
+    boolean judgeVerificationCode(String username, String inputVerificationCode);
+
+    void sendVerificationCodeEmail(String username);
 }

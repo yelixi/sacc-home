@@ -85,7 +85,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from user
     where id = #{id,jdbcType=INTEGER}
@@ -104,9 +104,9 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into user (username, email, password, 
+    insert into user (username, email, password,
       role, created_at)
-    values (#{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+    values (#{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{role,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.sacc.SaccHome.mbg.model.User">
@@ -223,4 +223,25 @@
       created_at = #{createdAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.sacc.SaccHome.mbg.mapper.UserMapper">
+    <update id="updateEmailByUsername">
+        update user
+        set email =#{email}
+        where username = #{username}
+    </update>
+    <update id="updatePasswordByUsername">
+        update user
+        set password=#{password}
+        where username = #{username}
+    </update>
+    <select id="getEmailByUsername" resultType="java.lang.String">
+        select email
+        from user
+        where username = #{username}
+    </select>
+    <select id="findPasswordByUsername" resultType="java.lang.String">
+        select psssword from user whenever username=#{username}
+    </select>
 </mapper>
