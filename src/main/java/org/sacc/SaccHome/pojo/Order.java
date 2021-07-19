@@ -10,10 +10,7 @@ import javax.persistence.Id;
 import java.sql.Timestamp;
 
 @Data
-@Entity
 public class Order {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
     //起始时间
     private String start_time;
