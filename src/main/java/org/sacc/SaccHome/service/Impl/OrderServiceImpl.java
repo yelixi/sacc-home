@@ -6,6 +6,7 @@ import org.sacc.SaccHome.pojo.Order;
 import org.sacc.SaccHome.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 @Service
@@ -25,6 +26,16 @@ public class OrderServiceImpl implements OrderService {
             return order;
         }else{
             return null;
+        }
+    }
+
+    @Override
+    public Boolean judgeTimeCorrect(Order order) {
+        List<Order> flag=ordermapper.judgeTimeCorrect(order);
+        if(CollectionUtils.isEmpty(flag)){
+            return true;
+        }else{
+            return false;
         }
     }
 }

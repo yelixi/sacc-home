@@ -39,14 +39,18 @@ public class OrderController {
      */
     @GetMapping("/applyOrder")
     public CommonResult <Order> save(Order order){
-        Timestamp time = Timestamp.valueOf(LocalDateTime.now());
-        order.setCreated_at(time);
-        order.setUpdated_at(time);   //设置当前的时间
-        Order save=orderService.save(order);
-        if(save!=null){
-            return CommonResult.success(save,"新增预约成功");
+        if(orderService.judgeTimeCorrect(order)){   //判断输入的时间段是否正确
+            Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+            order.setCreated_at(time);
+            order.setUpdated_at(time);   //设置当前的时间
+            Order save=orderService.save(order);
+            if(save!=null){
+                return CommonResult.success(save,"新增预约成功");
+            }else{
+                return CommonResult.failed("新增预约失败");
+            }
         }else{
-            return CommonResult.failed("新增预约失败");
+            return CommonResult.failed("该时间段已被预约");
         }
     }
 
