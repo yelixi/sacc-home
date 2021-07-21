@@ -1,9 +1,9 @@
 package org.sacc.SaccHome.service;
 
-        import org.sacc.SaccHome.pojo.Order;
-        import org.springframework.stereotype.Service;
+import org.sacc.SaccHome.mbg.model.Order;
+import org.springframework.stereotype.Service;
 
-        import java.util.List;
+import java.util.List;
 
 @Service
 public interface OrderService {

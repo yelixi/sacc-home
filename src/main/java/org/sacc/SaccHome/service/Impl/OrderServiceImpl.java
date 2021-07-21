@@ -2,7 +2,7 @@ package org.sacc.SaccHome.service.Impl;
 
 
 import org.sacc.SaccHome.mbg.mapper.OrderMapper;
-import org.sacc.SaccHome.pojo.Order;
+import org.sacc.SaccHome.mbg.model.Order;
 import org.sacc.SaccHome.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

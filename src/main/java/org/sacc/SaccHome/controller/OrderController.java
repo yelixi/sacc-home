@@ -2,7 +2,7 @@ package org.sacc.SaccHome.controller;
 
 
 import org.sacc.SaccHome.api.CommonResult;
-import org.sacc.SaccHome.pojo.Order;
+import org.sacc.SaccHome.mbg.model.Order;
 import org.sacc.SaccHome.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -41,8 +41,8 @@ public class OrderController {
     public CommonResult <Order> save(Order order){
         if(orderService.judgeTimeCorrect(order)){   //判断输入的时间段是否正确
             Timestamp time = Timestamp.valueOf(LocalDateTime.now());
-            order.setCreated_at(time);
-            order.setUpdated_at(time);   //设置当前的时间
+            order.setCreatedAt(time);
+            order.setUpdatedAt(time);   //设置当前的时间
             Order save=orderService.save(order);
             if(save!=null){
                 return CommonResult.success(save,"新增预约成功");
