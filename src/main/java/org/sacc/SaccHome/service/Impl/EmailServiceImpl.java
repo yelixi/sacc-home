@@ -3,11 +3,16 @@ package org.sacc.SaccHome.service.Impl;
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.exception.BusinessException;
 import org.sacc.SaccHome.service.EmailService;
+import org.sacc.SaccHome.util.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 /**
  * @author: 風楪fy
@@ -21,6 +26,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Value("${spring.mail.from}")
     private String from;
+
+    @Value("${spring.mail.username}")
+    private String username;
 
     @Override
     public void sendSimpleMail(String to, String verificationCode) {
@@ -37,6 +45,30 @@ public class EmailServiceImpl implements EmailService {
         } catch (Exception e){
             throw new BusinessException(ResultCode.EMAIL_SENDING_ABNORMAL);
         }
+
+    }
+
+    @Override
+    public void sendEmail(Email email) {
+        //创建邮件对象
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper message =new MimeMessageHelper(mimeMessage,true);
+            //发件人
+            message.setFrom(username);
+            //收件人
+            message.setTo(email.getTo());
+            //邮件主题
+            message.setSubject(email.getSubject());
+            //邮件内容
+            message.setText(email.getContent());
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        //发送邮件
+        mailSender.send(mimeMessage);
 
     }
 }

@@ -1,5 +1,6 @@
 package org.sacc.SaccHome.service;
 
+import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.mbg.model.User;
 
 import java.util.List;
@@ -22,4 +23,12 @@ public interface UserService {
     boolean judgeVerificationCode(String username, String inputVerificationCode);
 
     void sendVerificationCodeEmail(String username);
+
+    CommonResult createAccount(User user);
+
+    CommonResult loginAccount(User user);
+
+    CommonResult verifyAccount(String username,String code, String inCode);
+
+    CommonResult teamRegister(User user);
 }

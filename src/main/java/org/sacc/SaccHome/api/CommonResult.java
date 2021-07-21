@@ -107,4 +107,10 @@ public class CommonResult<T> {
         return new CommonResult<T>(code,message);
     }
 
+    /**
+     * 密码错误
+     */
+    public static <T> CommonResult<T> wrongPassword(long code,String message){
+        return new CommonResult<T>(code,message);
+    }
 }

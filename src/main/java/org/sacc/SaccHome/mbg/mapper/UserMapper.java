@@ -2,8 +2,7 @@ package org.sacc.SaccHome.mbg.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.mbg.model.UserExample;
 import org.springframework.stereotype.Repository;
@@ -40,4 +39,36 @@ public interface UserMapper {
     void updatePasswordByUsername(@Param("username") String username,@Param("password")String password);
 
     String findPasswordByUsername(@Param("username") String username);
+
+    @Insert("INSERT INTO user ( username, email, password, salt, create_at)"
+            +"VALUES(#{username}, #{email}, #{password},#{salt}, #{createAt})")
+    int insertUser(User user);
+
+    /**
+     * 根据用户名查询用户，因为用户名是唯一索引
+     * @param username
+     * @return
+     */
+    @Select("SELECT username, judge FROM user WHERE judge=0")
+    int selectUserByUserName(@Param("username") String username);
+
+    /**
+     * 修改激活
+     * @param username
+     * @return
+     */
+    @Update("UPDATE user SET judge = 1 WHERE username = #{username}")
+    int updateUserByUserName(@Param("username") String username);
+
+    /**
+     * 登录查询
+     * @param
+     * @return
+     */
+    @Select("SELECT username, password, salt,role FROM user WHERE username = #{username} AND judge = 1")
+    User loginUser(@Param("username") String username);
+
+    @Insert("INSERT INTO user ( username,password,create_at)"
+            +"VALUES(#{username}, #{password}, #{createAt})")
+    int teamInsertUser(User user);
 }
