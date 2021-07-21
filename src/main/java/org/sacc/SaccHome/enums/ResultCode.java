@@ -2,12 +2,12 @@ package org.sacc.SaccHome.enums;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-/**
- * 枚举了一些常用API操作码
- *  by weiwo
- */
-public enum ResultCode  {
+
+@Getter
+@AllArgsConstructor
+public enum ResultCode {
     SUCCESS(200, "操作成功"),
 
     FAILED(500, "操作失败"),

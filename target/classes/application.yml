@@ -21,3 +21,8 @@ spring:
 mybatis:
   type-aliases-package: org.sacc.SaccHome.mbg.model
   mapper-locations: classpath:mapper/*.xml
+
+#showSql
+logging:
+  level:
+    org.sacc.SaccHome.mapper: debug
