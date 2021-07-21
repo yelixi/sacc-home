@@ -30,4 +30,17 @@ public interface OrderMapper {
     int updateByPrimaryKeySelective(Order record);
 
     int updateByPrimaryKey(Order record);
+
+    /**
+     * 显示七天内的预约
+     * @return
+     */
+    List<org.sacc.SaccHome.pojo.Order> findNextWeek();
+
+    /**
+     * 新增预约
+     * @param order
+     * @return
+     */
+    int save(org.sacc.SaccHome.pojo.Order order);
 }
