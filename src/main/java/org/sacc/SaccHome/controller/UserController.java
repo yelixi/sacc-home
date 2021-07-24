@@ -64,7 +64,7 @@ public class UserController {
      * @param email
      * @return CommonResult
      */
-    @PostMapping("register")
+    @PostMapping("/register")
     public CommonResult createAccount(String username, String password, String email){
         User user = new User();
         user.setUsername(username);
@@ -86,7 +86,7 @@ public class UserController {
      * @param inCode
      * @return
      */
-    @PostMapping("verification")
+    @PostMapping("/verification")
     public CommonResult verifyAccount(String username, String inCode){
         String code = (String) redisTemplate.opsForValue().get(username);
         return userService.verifyAccount(username,code,inCode);
@@ -98,7 +98,7 @@ public class UserController {
      * @param password
      * @return
      */
-    @PostMapping("login")
+    @PostMapping("/login")
     public CommonResult loginAccount(String username, String password){
         User user = new User();
         user.setUsername(username);
@@ -106,7 +106,7 @@ public class UserController {
         return userService.loginAccount(user);
     }
 
-    @PostMapping("registerByTeam")
+    @PostMapping("/registerByTeam")
     public CommonResult teamRegister(String username, String password){
         User user = new User();
         user.setUsername(username);
