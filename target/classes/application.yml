@@ -14,6 +14,10 @@ spring:
     properties.mail.smtp.starttls.required: true
     properties.mail.smtp.ssl.enable: true
     default-encoding: utf-8
+  servlet:
+    multipart:
+      max-request-size: 5GB  # 上传文件总的最大值 默认10MB
+      max-file-size: 1GB #单个文件最大值 默认10MB
   redis:
     host: 123.56.2.36
     port: 6379
@@ -26,3 +30,9 @@ mybatis:
 logging:
   level:
     org.sacc.SaccHome.mapper: debug
+minio:
+  endpoint: http://192.168.0.103:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucket: "test"
+URL: http://127.0.0.1:8080
