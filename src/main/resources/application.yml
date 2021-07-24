@@ -30,9 +30,4 @@ mybatis:
 logging:
   level:
     org.sacc.SaccHome.mapper: debug
-minio:
-  endpoint: http://192.168.0.103:9000
-  accessKey: minioadmin
-  secretKey: minioadmin
-  bucket: "test"
 URL: http://127.0.0.1:8080
