@@ -53,8 +53,8 @@ public class FileController {
                 System.out.println("文件夹还没存在");
                 minioClient.makeBucket(bucketname);
             }
-            minioClient.putObject(bucketname, file.getOriginalFilename(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
-            return CommonResult.success(file.getOriginalFilename(), "成功上传" + file.getOriginalFilename());
+            minioClient.putObject(bucketname, file.getOriginalFilename()+"rule" file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
+            return CommonResult.success(file.getOriginalFilename()+"rule", "成功上传" + file.getOriginalFilename());
         }   catch(MinioException e) {
             return CommonResult.failed("Error occurred: " + e);
         }
