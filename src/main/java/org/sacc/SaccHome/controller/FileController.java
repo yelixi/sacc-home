@@ -1,24 +1,15 @@
 package org.sacc.SaccHome.controller;
-import io.minio.*;
+
+import io.minio.MinioClient;
+import io.minio.Result;
 import io.minio.errors.*;
 import io.minio.messages.Item;
-import lombok.extern.slf4j.Slf4j;
-
-import org.sacc.SaccHome.api.CommonResult;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -26,23 +17,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-/**
- * @author: 滚韬
- * @create: 2021-07-24 22:00
- * 1小时完成
- **/
 
-@Slf4j
 @RestController
 public class FileController {
-    /**
-     * 文件上传
-     * @param file
-     * @param bucketname
-     */
-
     @PostMapping(value = "/upload")
-    public CommonResult Upload(MultipartFile file, @RequestParam String bucketname) throws InvalidArgumentException, InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidPortException, InvalidEndpointException {
+    public void Upload(MultipartFile file, @RequestParam String bucketname) throws InvalidArgumentException, InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidPortException, InvalidEndpointException {
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             boolean isExist = minioClient.bucketExists(bucketname);
@@ -54,21 +33,13 @@ public class FileController {
                 minioClient.makeBucket(bucketname);
             }
             minioClient.putObject(bucketname, file.getOriginalFilename(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
-            return CommonResult.success(file.getOriginalFilename(), "成功上传" + file.getOriginalFilename());
+            System.out.println("ok");
         }   catch(MinioException e) {
-            return CommonResult.failed("Error occurred: " + e);
+            System.out.println("Error occurred: " + e);
         }
     }
-
-
-
-    /**
-     * 下载文件
-     * @param filename
-     * @param bucketname
-     */
     @GetMapping(value = "/download")
-    public CommonResult Download(@RequestParam("filename") String filename, @RequestParam("bucketname") String bucketname, HttpServletResponse resp) throws InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException, InvalidArgumentException {
+    public void Download(@RequestParam("filename") String filename, @RequestParam("bucketname") String bucketname, HttpServletResponse resp) throws InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException, InvalidArgumentException {
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             if (minioClient.bucketExists(bucketname)) {
@@ -90,36 +61,26 @@ public class FileController {
                 }
                 out.close();
                 in.close();
-                return CommonResult.failed("成功下载" + filename);
+                System.out.println("true");
             } else
-                return CommonResult.failed("未找到" + bucketname+" bucket" );
+                System.out.println("false");
         }catch (MinioException e) {
-            return CommonResult.failed("Error occurred: " + e);
+            System.out.println("Error occurred: " + e);
         }
     }
-
-    /**
-     * 删除文件
-     * @param filename
-     * @param bucketname
-     */
     @GetMapping(value = "/delete")
-    public CommonResult Delete(@RequestParam("filename") String filename, @RequestParam("bucketname") String bucketname) throws InvalidPortException, InvalidEndpointException, InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException {
+    public void Delete(@RequestParam("filename") String filename, @RequestParam("bucketname") String bucketname) throws InvalidPortException, InvalidEndpointException, InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException {
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             minioClient.statObject(bucketname, filename);
             minioClient.removeObject(bucketname, filename);
-            return CommonResult.success(filename, "成功删除" + filename);
+            System.out.println("successfully removed " + bucketname + "/" + filename);
         }
         catch (MinioException e) {
-            return CommonResult.failed("false:" + e);
+            System.out.println("Error occurred: " + e);
         }
 
     }
-    /**
-     * 列出桶内所有文件url
-     * @param bucketname
-     */
     @GetMapping(value = "/list")
     public ArrayList<Map<String, String>> List(@RequestParam("bucketname") String bucketname){
         try {
@@ -154,6 +115,4 @@ public class FileController {
         }
         return null;
     }
-
-
 }
