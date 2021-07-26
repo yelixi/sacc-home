@@ -30,9 +30,11 @@ public enum ResultCode {
 
     FAILED_VERIFICATION(406,"未通过验证"),
 
-    EMAIL_SENDING_ABNORMAL(407,"邮件发送错误")
+    EMAIL_SENDING_ABNORMAL(407,"邮件发送错误"),
 
+    TOKEN_IS_PASSED(408,"token已过期"),
 
+    TOKEN_IS_NOT_EXIT(409,"token不存在")
 
     ;
     private long code;

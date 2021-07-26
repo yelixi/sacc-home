@@ -4,9 +4,16 @@ import io.minio.MinioClient;
 import io.minio.Result;
 import io.minio.errors.*;
 import io.minio.messages.Item;
+import org.sacc.SaccHome.api.CommonResult;
+import org.sacc.SaccHome.mbg.mapper.FileMapper;
+import org.sacc.SaccHome.mbg.model.File;
+import org.sacc.SaccHome.mbg.model.FileTask;
+import org.sacc.SaccHome.service.FileTaskService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
+
+import javax.annotation.Resource;
 import javax.crypto.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -14,14 +21,21 @@ import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 public class FileController {
+    @Resource
+    private FileTaskService fileTaskService;
+
+    @Resource
+    private FileMapper fileMapper;
+
     @PostMapping(value = "/upload")
-    public void Upload(MultipartFile file, @RequestParam String bucketname) throws InvalidArgumentException, InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidPortException, InvalidEndpointException {
+    public void Upload(MultipartFile file, @RequestParam String bucketname) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             boolean isExist = minioClient.bucketExists(bucketname);
@@ -37,6 +51,45 @@ public class FileController {
         }   catch(MinioException e) {
             System.out.println("Error occurred: " + e);
         }
+    }
+    @PostMapping("/upload")
+    public CommonResult<File> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+        FileTask fileTask = fileTaskService.getFileTask(fileTaskId);
+        String fileName = file.getOriginalFilename();
+        assert fileName != null;
+        String[] filename = fileName.split("\\.");
+        StringBuilder newFileName = new StringBuilder();
+        for(int i=0;i<filename.length;i++){
+           if(i==filename.length-2)
+               newFileName.append(filename[i]).append(fileTask.getRule());
+           else if(i==filename.length-1)
+               newFileName.append(".").append(filename[i]);
+           newFileName.append(filename[i]);
+        }
+        try {
+            MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
+            boolean isExist = minioClient.bucketExists(bucketname);
+            if(isExist) {
+                System.out.println("文件夹已经存在了");
+            }
+            else {
+                System.out.println("文件夹还没存在");
+                minioClient.makeBucket(bucketname);
+            }
+            minioClient.putObject(bucketname, newFileName.toString(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
+            System.out.println("ok");
+        }   catch(MinioException e) {
+            System.out.println("Error occurred: " + e);
+        }
+        String url = "http://127.0.0.1:8080" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(newFileName.toString());
+        File f = new File();
+        f.setPath(url);
+        f.setFileName(newFileName.toString());
+        f.setFileTaskId(fileTaskId);
+        f.setCreatedAt(LocalDateTime.now());
+        f.setUpdatedAt(LocalDateTime.now());
+        fileMapper.insert(f);
+        return CommonResult.success(f);
     }
     @GetMapping(value = "/download")
     public void Download(@RequestParam("filename") String filename, @RequestParam("bucketname") String bucketname, HttpServletResponse resp) throws InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException, InvalidArgumentException {

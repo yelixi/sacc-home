@@ -9,6 +9,7 @@ import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
+import org.sacc.SaccHome.util.JwtToken;
 import org.sacc.SaccHome.util.VerificationCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
@@ -17,7 +18,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private JwtToken jwtToken;
 
 
     @Override
@@ -160,7 +166,10 @@ public class UserServiceImpl implements UserService {
         if(!md5Pwd.equals(md5.getPassword())){
             return CommonResult.wrongPassword(405,"密码错误");
         } else {
-            return CommonResult.success(null,"登录成功");
+            String token = jwtToken.generateToken(user);
+            Map<String,String> m = new HashMap<>();
+            m.put("token",token);
+            return CommonResult.success(m,"登录成功");
         }
     }
 
