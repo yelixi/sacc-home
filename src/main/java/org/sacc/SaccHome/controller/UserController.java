@@ -5,6 +5,7 @@ import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
 import org.sacc.SaccHome.util.Email;
+import org.sacc.SaccHome.util.SaltUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -69,7 +70,8 @@ public class UserController {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        user.setSalt();
+        String salt = SaltUtil.getSalt(8);
+        user.setSalt(salt);
         user.setEmail(email);
 
         Email e = new Email();

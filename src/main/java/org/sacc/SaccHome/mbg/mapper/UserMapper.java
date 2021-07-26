@@ -36,9 +36,11 @@ public interface UserMapper {
 
     void updateEmailByUsername(@Param("username") String username,@Param("email")String email);
 
-    void updatePasswordByUsername(@Param("username") String username,@Param("password")String password);
+    void updatePasswordByUsername(@Param("username") String username,@Param("password")String password,@Param("salt")String salt);
 
     String findPasswordByUsername(@Param("username") String username);
+
+    String findSaltByUsername(@Param("username")String username);
 
     @Insert("INSERT INTO user ( username, email, password, salt, create_at)"
             +"VALUES(#{username}, #{email}, #{password},#{salt}, #{createAt})")
