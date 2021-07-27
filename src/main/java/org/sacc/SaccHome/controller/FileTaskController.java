@@ -31,8 +31,8 @@ import java.util.List;
 @Controller
 @Api(tags = "fileController" ,description = "weiwo-任务3-文件任务")
 @RequestMapping("/file")
-public class fileController {
-    private static final Logger logger= LoggerFactory.getLogger(fileController.class);
+public class FileTaskController {
+    private static final Logger logger= LoggerFactory.getLogger(FileTaskController.class);
     @Autowired
     private FileTaskService fileTaskService;
     @Autowired
