@@ -34,7 +34,7 @@ public class FileController {
     @Resource
     private FileMapper fileMapper;
 
-    @PostMapping(value = "/upload")
+    /*@PostMapping(value = "/upload")
     public void Upload(MultipartFile file, @RequestParam String bucketname) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
@@ -51,7 +51,7 @@ public class FileController {
         }   catch(MinioException e) {
             System.out.println("Error occurred: " + e);
         }
-    }
+    }*/
     @PostMapping("/upload")
     public CommonResult<File> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         FileTask fileTask = fileTaskService.getFileTask(fileTaskId);
