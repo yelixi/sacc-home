@@ -1,5 +1,6 @@
 package org.sacc.SaccHome.controller;
 
+import lombok.SneakyThrows;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -108,11 +110,11 @@ public class UserController {
         return userService.loginAccount(user);
     }
 
-    @PostMapping("/registerByTeam")
-    public CommonResult teamRegister(String username, String password){
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        return userService.teamRegister(user);
+    @SneakyThrows
+    @PostMapping("registerAll")
+    public CommonResult registerAll(String address){
+        //addres是存储excel的地址！！
+        File file = new File(address);
+        return userService.registerAll(file.getAbsolutePath());
     }
 }

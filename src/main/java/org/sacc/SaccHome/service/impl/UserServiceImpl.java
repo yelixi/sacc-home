@@ -1,6 +1,12 @@
 package org.sacc.SaccHome.service.Impl;
 
 import cn.hutool.crypto.SecureUtil;
+import lombok.SneakyThrows;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.exception.AuthenticationException;
@@ -17,6 +23,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -130,12 +137,16 @@ public class UserServiceImpl implements UserService {
     /*
     注册账号
     * */
-    public CommonResult createAccount(User user){
-        String mdPwd =  SecureUtil.md5(user.getPassword()+user.getSalt());
+    public CommonResult createAccount(User user) {
+        String mdPwd = SecureUtil.md5(user.getPassword() + user.getSalt());
         user.setPassword(mdPwd);
         user.setCreateAt(LocalDateTime.now());
-        int result1 = userMapper.selectUserByUserName(user.getUsername());
-        if (result1 == 0) {
+        User u = userMapper.loginUser(user.getUsername());
+        if (u.getJudge() == 1)
+            return CommonResult.failed("该账号已经完成注册并验证了");
+
+        List<User> result1 = userMapper.selectUserByUserName(user.getUsername());
+        if (result1.isEmpty()) {
             int result2 = userMapper.insertUser(user);
             if (result2 > 0) {
                 return CommonResult.success(null, "操作成功，请输入验证码验证码");
@@ -143,7 +154,7 @@ public class UserServiceImpl implements UserService {
                 return CommonResult.failed("操作失败");
             }
         } else {
-            return CommonResult.failed("已经注册过");
+            return CommonResult.failed("已经注册过,但未验证");
         }
     }
     /**
@@ -193,45 +204,41 @@ public class UserServiceImpl implements UserService {
 
 
     /**
-     * 批量注册，写不出来
-     * @param user
+     * 使用Apache POI
+     *
+     * @param address
      * @return
      */
-
-    public CommonResult teamRegister(User user){
-        //先根据用户名查询到该用户
-        User md5 = userMapper.loginUser(user.getUsername());
-        //判断是否能查询到
-        //否则提醒进行激活
-        if(md5==null||!md5.getUsername().equals(user.getUsername())){
-            return CommonResult.failed("该账号未验证或不存在！");
-        }
-        //判断该用户是否激活
-        //若激活，则继续判断密码是否正确
-        String md5Pwd = SecureUtil.md5(user.getPassword()+md5.getSalt());
-        if(!md5Pwd.equals(md5.getPassword())){
-            return CommonResult.wrongPassword(405,"密码错误");
-        } else if(md5.getRole().equals("学生")){
-            return CommonResult.forbidden(null);
-        } else {
-            System.out.println("成功登录请开始操作");
-            System.out.println("如果继续输入任意字符，如果退出输入0");
-            Scanner scanner = new Scanner(System.in);
-            String judge = scanner.nextLine();
-            while(!judge.equals("0")){
-                User u = new User();
-                System.out.println("输入用户名");
-                u.setUsername(scanner.nextLine());
-                u.setPassword("123456");
-                u.setCreateAt(LocalDateTime.now());
-                int result = userMapper.teamInsertUser(u);
-                if (result>0){
-                    return CommonResult.success(null,"注册成功");
-                } else {
-                    return CommonResult.failed("存在错误!");
+    @SneakyThrows
+    public CommonResult registerAll(String address) {
+        User user = new User();
+        user.setSalt();
+        String mdPwd = SecureUtil.md5("123456" + user.getSalt());
+        user.setPassword(mdPwd);
+        user.setCreateAt(LocalDateTime.now());
+        user.setJudge((byte) 1);
+        FileInputStream inputStream = new FileInputStream(address);
+        Workbook workbook = new HSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        int rowTotalCount = sheet.getLastRowNum();
+        int i = 1;
+        for (i = 1;i<=rowTotalCount ; i++) {
+            Row row = sheet.getRow(i);
+            Cell cell = row.getCell(0);
+            String temp = cell.getStringCellValue();
+            if (!temp.equals(null)) {
+                user.setUsername(temp);
+                user.setEmail(temp.toLowerCase()+"@njupt.edu.cn");
+                int result = userMapper.insertUser(user);
+                if (result <= 0){
+                    inputStream.close();
+                    return CommonResult.failed("操作失败");
                 }
+            } else {
+                break;
             }
-            return CommonResult.failed("也关闭该功能");
         }
+        inputStream.close();
+        return CommonResult.success(null,"录入结束");
     }
 }
