@@ -30,5 +30,5 @@ public interface UserService {
 
     CommonResult verifyAccount(String username,String code, String inCode);
 
-    CommonResult teamRegister(User user);
+    CommonResult registerAll(String address);
 }
