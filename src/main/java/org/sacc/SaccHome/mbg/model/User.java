@@ -15,7 +15,7 @@ public class User {
     private String password;//输入的密码
     private String salt;//用于加密的盐
     private String role;//身份，默认学生，判断权限用
-    private LocalDateTime createAt;//创建时间
+    private LocalDateTime createdAt;//创建时间
     private Byte judge;//判断是否验证
 
     public void setSalt(){

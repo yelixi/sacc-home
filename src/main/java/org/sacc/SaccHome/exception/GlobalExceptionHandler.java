@@ -24,11 +24,11 @@ public class GlobalExceptionHandler {
      * 捕获所有异常
      * @return 返回“服务器内部错误”
      */
-    @ExceptionHandler(Exception.class)
+    /*@ExceptionHandler(Exception.class)
     public CommonResult<ResultCode> exception(){
         return CommonResult.error(ResultCode.INTERNAL_SERVER_ERROR);
     }
-
+*/
     /**
      * 全局处理NullPointerException类型的异常
      */

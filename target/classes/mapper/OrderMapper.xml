@@ -270,7 +270,7 @@
     <select id="judgeTimeCorrect" parameterType="org.sacc.SaccHome.mbg.model.Order" resultMap="BaseResultMap">
         SELECT * FROM `order` WHERE
             (start_time &gt;= #{startTime} AND start_time &lt; #{endTime}) OR
-            (start_time &lt;= #{starTime} AND end_time &gt;= #{endTime}) OR
+            (start_time &lt;= #{startTime} AND end_time &gt;= #{endTime}) OR
             (end_time &gt;= #{startTime} AND end_time &lt;= #{endTime})
     </select>
 </mapper>

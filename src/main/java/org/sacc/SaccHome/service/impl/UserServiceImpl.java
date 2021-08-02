@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.exception.AuthenticationException;
-import org.sacc.SaccHome.exception.BusinessException;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
@@ -18,9 +17,7 @@ import org.sacc.SaccHome.service.UserService;
 import org.sacc.SaccHome.util.JwtToken;
 import org.sacc.SaccHome.util.VerificationCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -28,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 
@@ -87,7 +83,7 @@ public class UserServiceImpl implements UserService {
     public void updatePasswordByUsername(String username, String oldPassword, String newPassword) {
         //todo 等写登录和注册的xdm确定了密码加密方式后修改，目前仅作明文相等判断
         if (userMapper.findPasswordByUsername(username) == oldPassword) {
-            userMapper.updatePasswordByUsername(username, newPassword);
+            userMapper.updatePasswordByUsername(username, newPassword,"");
         } else {
             throw new AuthenticationException(ResultCode.WRONG_PASSWORD);
         }
@@ -104,7 +100,7 @@ public class UserServiceImpl implements UserService {
         //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
         if (value.equals("true")) {
             //todo 等密码加密方式
-            userMapper.updatePasswordByUsername(username, password);
+            userMapper.updatePasswordByUsername(username, password,"");
         } else {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
@@ -140,9 +136,9 @@ public class UserServiceImpl implements UserService {
     public CommonResult createAccount(User user) {
         String mdPwd = SecureUtil.md5(user.getPassword() + user.getSalt());
         user.setPassword(mdPwd);
-        user.setCreateAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now());
         User u = userMapper.loginUser(user.getUsername());
-        if (u.getJudge() == 1)
+        if (u!=null&&u.getJudge() == 1)
             return CommonResult.failed("该账号已经完成注册并验证了");
 
         List<User> result1 = userMapper.selectUserByUserName(user.getUsername());
@@ -215,7 +211,7 @@ public class UserServiceImpl implements UserService {
         user.setSalt();
         String mdPwd = SecureUtil.md5("123456" + user.getSalt());
         user.setPassword(mdPwd);
-        user.setCreateAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte) 1);
         FileInputStream inputStream = new FileInputStream(address);
         Workbook workbook = new HSSFWorkbook(inputStream);
