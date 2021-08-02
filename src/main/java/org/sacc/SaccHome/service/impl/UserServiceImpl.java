@@ -14,6 +14,7 @@ import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
+import org.sacc.SaccHome.util.Email;
 import org.sacc.SaccHome.util.JwtToken;
 import org.sacc.SaccHome.util.VerificationCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,11 @@ public class UserServiceImpl implements UserService {
         String verificationCode = VerificationCodeGenerator.getVerificationCode(6);
         redisTemplate.opsForValue().setIfAbsent(username, verificationCode, 1, TimeUnit.HOURS);
         emailService.sendSimpleMail(email, verificationCode);
+    }
+
+    @Override
+    public CommonResult createAccount(User user, Email email) {
+        return null;
     }
 
     /*

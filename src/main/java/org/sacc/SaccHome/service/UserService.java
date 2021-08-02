@@ -2,6 +2,7 @@ package org.sacc.SaccHome.service;
 
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.mbg.model.User;
+import org.sacc.SaccHome.util.Email;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface UserService {
 
     void sendVerificationCodeEmail(String username);
 
-    CommonResult createAccount(User user);
+    CommonResult createAccount(User user, Email email);
 
     CommonResult loginAccount(User user);
 
