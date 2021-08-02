@@ -24,6 +24,11 @@ public class TestController {
     @Resource
     private RoleUtil roleUtil;
 
+    /**
+     * 测试样例
+     * @RequestHeader 从http header中取参数
+     * @param token 从http header中取得的token
+     */
     @GetMapping("/test")
     public Map<String,String> test1(@RequestHeader String token){
         Map<String,String> m = new HashMap<>();
