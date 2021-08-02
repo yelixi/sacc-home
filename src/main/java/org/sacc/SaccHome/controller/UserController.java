@@ -6,6 +6,7 @@ import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
 import org.sacc.SaccHome.util.Email;
+import org.sacc.SaccHome.util.MultipartFileToFile;
 import org.sacc.SaccHome.util.SaltUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -112,9 +114,12 @@ public class UserController {
 
     @SneakyThrows
     @PostMapping("registerAll")
-    public CommonResult registerAll(String address){
-        //addres是存储excel的地址！！
-        File file = new File(address);
-        return userService.registerAll(file.getAbsolutePath());
+
+    public CommonResult registerAll(MultipartFile file){
+        File file1 = MultipartFileToFile.multipartFileToFile(file);
+        String address = file1.getAbsolutePath();
+//        MultipartFileToFile.delteTempFile(file1);
+        //缓存释放有点问题，但应该没有关系吧
+        return userService.registerAll(address);
     }
 }

@@ -51,7 +51,7 @@ public interface UserMapper {
      * @param username
      * @return
      */
-    @Select("SELECT username,password,email,role, judge FROM user WHERE judge=0")
+    @Select("SELECT username,password,email,role, judge FROM user WHERE username = #{username} AND judge=0")
     List<User> selectUserByUserName(@Param("username") String username);
 
     /**
