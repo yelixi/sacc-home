@@ -80,9 +80,8 @@ public class UserController {
 
         Email e = new Email();
         e.setTo(email);
-        emailService.sendEmail(e);
         redisTemplate.opsForValue().set(username,e.getContent(),1, TimeUnit.DAYS);
-        return userService.createAccount(user);
+        return userService.createAccount(user, e);
     }
 
 

@@ -15,6 +15,7 @@ import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
+import org.sacc.SaccHome.util.Email;
 import org.sacc.SaccHome.util.JwtToken;
 import org.sacc.SaccHome.util.VerificationCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,23 +138,26 @@ public class UserServiceImpl implements UserService {
     /*
     注册账号
     * */
-    public CommonResult createAccount(User user) {
+    public CommonResult createAccount(User user, Email email) {
         String mdPwd = SecureUtil.md5(user.getPassword() + user.getSalt());
         user.setPassword(mdPwd);
         user.setCreateAt(LocalDateTime.now());
+        user.setJudge((byte)0);
         User u = userMapper.loginUser(user.getUsername());
-        if (u.getJudge() == 1)
+        if (u != null && u.getJudge() == 1)
             return CommonResult.failed("该账号已经完成注册并验证了");
 
         List<User> result1 = userMapper.selectUserByUserName(user.getUsername());
         if (result1.isEmpty()) {
             int result2 = userMapper.insertUser(user);
             if (result2 > 0) {
+                emailService.sendEmail(email);
                 return CommonResult.success(null, "操作成功，请输入验证码验证码");
             } else {
                 return CommonResult.failed("操作失败");
             }
         } else {
+            emailService.sendEmail(email);
             return CommonResult.failed("已经注册过,但未验证");
         }
     }
