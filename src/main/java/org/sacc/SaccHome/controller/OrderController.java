@@ -61,7 +61,7 @@ public class OrderController {
                 return CommonResult.failed("该时间段已被预约");
             }
         }else{
-            return CommonResult.failed("请输入正确的时间段");
+            return CommonResult.failed("请输入今日之后的时间段");
         }
     }
 
