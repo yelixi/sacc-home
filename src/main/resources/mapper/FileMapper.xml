@@ -240,4 +240,7 @@
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectList"  resultType="org.sacc.SaccHome.mbg.model.File">
+    SELECT * FROM file
+  </select>
 </mapper>
