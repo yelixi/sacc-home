@@ -12,10 +12,12 @@ public class Order {
     private String startTime;
 
     private String endTime;
-
-    private Integer number;
-
-    private String nameList;
+    //课堂名称
+    private String name;
+    //课堂主讲人
+    private String user;
+    //课堂介绍
+    private String introduction;
 
     private Integer userId;
 
