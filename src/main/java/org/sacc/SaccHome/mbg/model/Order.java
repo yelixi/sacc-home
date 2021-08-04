@@ -19,6 +19,8 @@ public class Order {
     //课堂介绍
     private String introduction;
 
+    private Integer userId;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createdAt;
 
