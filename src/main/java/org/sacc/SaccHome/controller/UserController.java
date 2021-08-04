@@ -1,13 +1,12 @@
 package org.sacc.SaccHome.controller;
 
+import cn.hutool.jwt.Claims;
 import lombok.SneakyThrows;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
-import org.sacc.SaccHome.util.Email;
-import org.sacc.SaccHome.util.MultipartFileToFile;
-import org.sacc.SaccHome.util.SaltUtil;
+import org.sacc.SaccHome.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -33,6 +32,8 @@ public class UserController {
     private EmailService emailService;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private JwtToken jwtToken;
 
     @PutMapping("/sendEmail")
     public void sendEmail(String username) {
@@ -57,6 +58,18 @@ public class UserController {
     @PutMapping("/updatePassword")
     public void updatePassword(String username, String oldPassword, String newPassword){
         userService.updatePasswordByUsername(username,oldPassword,newPassword);
+    }
+
+    @GetMapping("/getUserInfo")
+    public CommonResult<User> getUserInfo(@RequestHeader String token){
+        Claims claims = (Claims) jwtToken.getClaimByToken(token);
+        String username = (String) claims.getClaim("username");
+        return CommonResult.success(userService.getUserInfo(username));
+    }
+
+    @GetMapping("/getUser")
+    public CommonResult<User> getUser(@RequestParam Integer id){
+        return CommonResult.success(userService.getUser(id));
     }
 
     /**

@@ -25,6 +25,8 @@ public interface UserService {
 
     void sendVerificationCodeEmail(String username);
 
+    User getUserInfo(String username);
+
     CommonResult createAccount(User user, Email email);
 
     CommonResult loginAccount(User user);
