@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -134,38 +135,9 @@ public class FileController {
         }
 
     }
-    @GetMapping(value = "/list")
-    public ArrayList<Map<String, String>> List(@RequestParam("bucketname") String bucketname){
-        try {
-            MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
-            // 检查'mybucket'是否存在。
-            boolean found = minioClient.bucketExists(bucketname);
-            if (found) {
-                Map<String, String> map = new HashMap<String, String>();
-                ArrayList<Map<String, String>> url = new ArrayList<Map<String, String>>();
-                url.add(map);
-                Iterable<Result<Item>> results =
-                        minioClient.listObjects(bucketname);
-                for (Result<Item> result : results) {
-                    Item item = result.get();
-                    map.put(item.objectName(), "http://127.0.0.1:8080" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(item.objectName(), "UTF-8"));
-                }
-                System.out.println(url);
-                return url;
-            } else {
-                System.out.println("mybucket does not exist");
-            }
-        } catch (MinioException e) {
-            System.out.println("Error occurred: " + e);
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @GetMapping(value = "list")
+    public List<File> List(){
+        return fileMapper.selectList();
     }
+
 }

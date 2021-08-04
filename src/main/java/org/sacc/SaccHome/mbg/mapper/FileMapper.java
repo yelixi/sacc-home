@@ -29,4 +29,6 @@ public interface FileMapper {
     int updateByPrimaryKeySelective(File record);
 
     int updateByPrimaryKey(File record);
+
+    List<File> selectList();
 }
