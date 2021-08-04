@@ -113,7 +113,7 @@
         insert into user (username, email, password,
         role, created_at, salt, judge)
         values (#{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-        #{role,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},#{salt,jdbcTybe=VARCHAR},#{judge,jdbcTybe=INTEGER})
+        #{role,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},#{salt,jdbcType=VARCHAR},#{judge,jdbcType=INTEGER})
     </insert>
     <insert id="insertSelective" parameterType="org.sacc.SaccHome.mbg.model.User">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
