@@ -13,7 +13,7 @@ public class Order {
 
     private String endTime;
     //课堂名称
-    private String name;
+    private String className;
     //课堂主讲人
     private String presenter;
     //课堂介绍
