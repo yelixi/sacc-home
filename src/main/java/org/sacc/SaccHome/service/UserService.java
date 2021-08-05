@@ -34,4 +34,6 @@ public interface UserService {
     CommonResult verifyAccount(String username,String code, String inCode);
 
     CommonResult registerAll(String address);
+
+    boolean authorize(Integer userId,String role);
 }

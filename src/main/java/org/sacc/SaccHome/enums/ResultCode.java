@@ -34,7 +34,9 @@ public enum ResultCode {
 
     TOKEN_IS_PASSED(408,"token已过期"),
 
-    TOKEN_IS_NOT_EXIT(409,"token不存在")
+    TOKEN_IS_NOT_EXIT(409,"token不存在"),
+
+    NOT_EXIT_THIS_ROLE(410,"不存在此种权限")
 
     ;
     private long code;

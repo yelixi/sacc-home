@@ -3,6 +3,7 @@ package org.sacc.SaccHome.controller;
 import cn.hutool.jwt.Claims;
 import lombok.SneakyThrows;
 import org.sacc.SaccHome.api.CommonResult;
+import org.sacc.SaccHome.enums.RoleEnum;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
@@ -34,6 +35,8 @@ public class UserController {
     private RedisTemplate redisTemplate;
     @Resource
     private JwtToken jwtToken;
+    @Resource
+    private RoleUtil roleUtil;
 
     @PutMapping("/sendEmail")
     public void sendEmail(String username) {
@@ -130,5 +133,14 @@ public class UserController {
 //        MultipartFileToFile.delteTempFile(file1);
         //缓存释放有点问题，但应该没有关系吧
         return userService.registerAll(address);
+    }
+
+    @PostMapping("/authorize")
+    public CommonResult<Boolean> authorize(@RequestParam Integer userId,@RequestParam String role,@RequestHeader String token){
+        if(roleUtil.hasRole(token, RoleEnum.ROOT)){
+            return CommonResult.success(userService.authorize(userId,role));
+        }
+        else
+            return CommonResult.unauthorized(null);
     }
 }

@@ -15,4 +15,19 @@ public enum RoleEnum {
     MEMBER,
 
     ADMIN
+
+    ;
+
+    public static boolean isExist(String role) {
+        if (role == null) {
+            return false;
+        }
+        for (RoleEnum e : values()) {
+            if (role.equals(e.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
