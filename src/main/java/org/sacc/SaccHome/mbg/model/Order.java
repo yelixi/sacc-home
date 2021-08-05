@@ -15,7 +15,7 @@ public class Order {
     //课堂名称
     private String name;
     //课堂主讲人
-    private String user;
+    private String presenter;
     //课堂介绍
     private String introduction;
 
