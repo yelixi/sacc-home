@@ -9,7 +9,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.ResultCode;
+import org.sacc.SaccHome.enums.RoleEnum;
 import org.sacc.SaccHome.exception.AuthenticationException;
+import org.sacc.SaccHome.exception.BusinessException;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
@@ -248,5 +250,15 @@ public class UserServiceImpl implements UserService {
         }
         inputStream.close();
         return CommonResult.success(null,"录入结束");
+    }
+
+    @Override
+    public boolean authorize(Integer userId, String role) {
+        if(!RoleEnum.isExist(role))
+            throw new BusinessException(ResultCode.TOKEN_IS_NOT_EXIT);
+        User user = new User();
+        user.setId(userId);
+        user.setRole(role);
+        return userMapper.updateByPrimaryKeySelective(user)==1;
     }
 }
