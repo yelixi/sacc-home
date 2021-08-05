@@ -18,6 +18,7 @@ import javax.crypto.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -35,8 +36,9 @@ public class FileController {
     @Resource
     private FileMapper fileMapper;
 
-    /*@PostMapping(value = "/upload")
-    public void Upload(MultipartFile file, @RequestParam String bucketname) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+
+    @PostMapping(value = "/upload")
+    public CommonResult<String> Upload(MultipartFile file, @RequestParam String bucketname) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             boolean isExist = minioClient.bucketExists(bucketname);
@@ -48,11 +50,54 @@ public class FileController {
                 minioClient.makeBucket(bucketname);
             }
             minioClient.putObject(bucketname, file.getOriginalFilename(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
-            System.out.println("ok");
+            return CommonResult.success("ok");
         }   catch(MinioException e) {
             System.out.println("Error occurred: " + e);
+            return CommonResult.error(1005,"Error occurred: " + e);
         }
-    }*/
+    }
+
+    @GetMapping("/getAllShareFile")
+    public CommonResult<List<Map<String,String>>> getAllShareFile() throws InvalidPortException, InvalidEndpointException, IOException, InvalidKeyException, NoSuchAlgorithmException, InsufficientDataException, InternalException, NoResponseException, InvalidBucketNameException, XmlPullParserException, ErrorResponseException {
+        MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
+        String bucketname = "share";
+        List<Map<String,String>> url = new ArrayList<>();
+        if(!minioClient.bucketExists(bucketname))
+        {
+            return CommonResult.error(1003,"不存在的buckname");
+        }
+
+        else {
+            Map<String, String> map = new HashMap<String, String>();
+            url.add(map);
+            Iterable<Result<Item>> results =
+                    minioClient.listObjects(bucketname);
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                map.put(item.objectName(), "http://127.0.0.1:8080" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(item.objectName(), StandardCharsets.UTF_8));
+            }
+            System.out.println(url);
+            return CommonResult.success(url);
+        }
+    }
+
+    @GetMapping(value = "/deleteShareFile")
+    public CommonResult<String> deleteShareFile(@RequestParam("filename") String filename) throws InvalidPortException, InvalidEndpointException, InvalidBucketNameException, InsufficientDataException, XmlPullParserException, ErrorResponseException, NoSuchAlgorithmException, IOException, NoResponseException, InvalidKeyException, InternalException {
+        String bucketname = "share";
+        try {
+            MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
+            minioClient.statObject(bucketname, filename);
+            minioClient.removeObject(bucketname, filename);
+            System.out.println("successfully removed " + bucketname + "/" + filename);
+            return CommonResult.success("successfully removed " + bucketname + "/" + filename);
+        }
+        catch (MinioException e) {
+            System.out.println("Error occurred: " + e);
+            return CommonResult.error(1005,"Error occurred: " + e);
+        }
+
+    }
+
     @PostMapping("/upload")
     public CommonResult<File> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         FileTask fileTask = fileTaskService.getFileTask(fileTaskId);
