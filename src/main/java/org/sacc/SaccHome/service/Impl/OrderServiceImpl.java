@@ -38,4 +38,24 @@ public class OrderServiceImpl implements OrderService {
             return false;
         }
     }
+
+    @Override
+    public int findIdByIndex(int index) {
+        return ordermapper.findIdByIndex(index).getId();
+    }
+
+    @Override
+    public void deleteById(int id) {
+        ordermapper.deleteById(id);
+    }
+
+    @Override
+    public void update(Order order) {
+        ordermapper.update(order);
+    }
+
+    @Override
+    public void deleteTimeById(int id) {
+        ordermapper.deleteTimeById(id);
+    }
 }

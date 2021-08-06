@@ -81,4 +81,59 @@ public class OrderController {
             return CommonResult.unauthorized(null);
         }
     }
+
+    /**
+     * 删除预约
+     * @param index
+     * @param token
+     * @return
+     */
+    @DeleteMapping("/deleteOrder")
+    public CommonResult deleteByIndex(int index,@RequestHeader String token){
+        if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+            int id=orderService.findIdByIndex(index);
+            orderService.deleteById(id);
+            return CommonResult.success(null);
+        }else{
+            return CommonResult.unauthorized(null);
+        }
+    }
+
+    /**
+     * 更新预约
+     * @param order
+     * @param index
+     * @param token
+     * @return
+     * @throws ParseException
+     */
+    @PutMapping("/updateOrder")
+    public CommonResult update(Order order,int index,@RequestHeader String token) throws ParseException {
+        if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+            int id=orderService.findIdByIndex(index);
+            order.setId(id);    //设置order的id，根据这个去更新
+            orderService.deleteTimeById(id);      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
+            String statrTime=order.getStartTime();
+            String endTime=order.getEndTime();
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date1 = sf.parse(statrTime);
+            Date date2 = sf.parse(endTime);
+            if(date1.before(date2)){         //判断起始时间是否早于结束时间
+                if(date1.after(new Date())) {       //判B断起始时间是否比当前时间晚
+                    if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否正确
+                        orderService.update(order);
+                        return CommonResult.success(null);
+                    } else {
+                        return CommonResult.failed("该时间段已被预约");
+                    }
+                }else{
+                    return CommonResult.failed("请输入今日之后的时间段");
+                }
+            }else{
+                return CommonResult.failed("起始时间需早于结束时间");
+            }
+        }else{
+            return CommonResult.unauthorized(null);
+        }
+    }
 }

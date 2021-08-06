@@ -288,4 +288,35 @@
             (start_time &lt;= #{startTime} AND end_time &gt;= #{endTime}) OR
             (end_time &gt;= #{startTime} AND end_time &lt;= #{endTime})
     </select>
+
+    <!--按照行数查找数据的id-->
+    <select id="findIdByIndex" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT id FROM `order` LIMIT #{index},1;
+    </select>
+
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+      DELETE FROM `order` WHERE id=#{id};
+    </delete>
+
+    <update id="update" parameterType="org.sacc.SaccHome.mbg.model.Order">
+      update `order`
+      set start_time = #{startTime,jdbcType=TIMESTAMP},
+          end_time = #{endTime,jdbcType=TIMESTAMP},
+          class_name = #{className,jdbcType=VARCHAR},
+          presenter = #{presenter,jdbcType=VARCHAR},
+          introduction = #{introduction,jdbcType=VARCHAR},
+          updated_at = current_timestamp()
+      where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="deleteTimeById" parameterType="java.lang.Integer">
+      update `order`
+      set start_time = null,
+          end_time = null
+      where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+
 </mapper>

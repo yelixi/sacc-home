@@ -51,4 +51,12 @@ public interface OrderMapper {
      * @return
      */
     List<Order> judgeTimeCorrect(Order order);
+
+    Order findIdByIndex(int index);
+
+    void deleteById(int id);
+
+    int update(Order order);
+
+    void deleteTimeById(int id);
 }

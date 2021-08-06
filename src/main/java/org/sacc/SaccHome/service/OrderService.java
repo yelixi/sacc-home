@@ -13,4 +13,12 @@ public interface OrderService {
     public Order save(Order order);
 
     Boolean judgeTimeCorrect(Order order);
+
+    int findIdByIndex(int index);
+
+    void deleteById(int id);
+
+    void update(Order order);
+
+    void deleteTimeById(int id);
 }
