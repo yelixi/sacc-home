@@ -38,7 +38,8 @@ public class FileController {
 
 
     @PostMapping(value = "/uploadShareFile")
-    public CommonResult<String> Upload(MultipartFile file, @RequestParam String bucketname) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public CommonResult<String> Upload(MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+        String bucketname = "share";
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             boolean isExist = minioClient.bucketExists(bucketname);

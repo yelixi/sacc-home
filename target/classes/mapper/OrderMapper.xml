@@ -5,8 +5,9 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
-    <result column="number" jdbcType="INTEGER" property="number" />
-    <result column="name_list" jdbcType="VARCHAR" property="nameList" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+    <result column="presenter" jdbcType="VARCHAR" property="presenter" />
+    <result column="introduction" jdbcType="VARCHAR" property="introduction" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, start_time, end_time, number, name_list, user_id, created_at, updated_at
+    id, start_time, end_time, class_name, presenter, introduction, user_id, created_at, updated_at
   </sql>
   <select id="selectByExample" parameterType="org.sacc.SaccHome.mbg.model.OrderExample" resultMap="BaseResultMap">
     select
@@ -106,11 +107,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into order (start_time, end_time, number,
-      name_list, user_id, created_at,
+    insert into order (start_time, end_time, class_name,
+    presenter, introduction, user_id,created_at,
       updated_at)
-    values (#{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{number,jdbcType=INTEGER},
-      #{nameList,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP},
+    values (#{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{className,jdbcType=VARCHAR},
+      #{presenter,jdbcType=VARCHAR}, #{introduction,jdbcType=VARCHAR},  #{userId,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP},
       #{updatedAt,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.sacc.SaccHome.mbg.model.Order">
@@ -125,11 +126,14 @@
       <if test="endTime != null">
         end_time,
       </if>
-      <if test="number != null">
-        number,
+      <if test="className != null">
+        class_name,
       </if>
-      <if test="nameList != null">
-        name_list,
+      <if test="presenter != null">
+        presenter,
+      </if>
+      <if test="introduction != null">
+        introduction,
       </if>
       <if test="userId != null">
         user_id,
@@ -148,11 +152,14 @@
       <if test="endTime != null">
         #{endTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="number != null">
-        #{number,jdbcType=INTEGER},
+      <if test="className != null">
+        #{className,jdbcType=VARCHAR},
       </if>
-      <if test="nameList != null">
-        #{nameList,jdbcType=VARCHAR},
+      <if test="presenter != null">
+        #{presenter,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null">
+        #{introduction,jdbcType=VARCHAR},
       </if>
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
@@ -184,10 +191,13 @@
         end_time = #{record.endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.number != null">
-        number = #{record.number,jdbcType=INTEGER},
+        class_name = #{record.className,jdbcType=VARCHAR},
       </if>
       <if test="record.nameList != null">
-        name_list = #{record.nameList,jdbcType=VARCHAR},
+        presenter = #{record.presenter,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null">
+        introduction = #{record.introduction,jdbcType=VARCHAR},
       </if>
       <if test="record.userId != null">
         user_id = #{record.userId,jdbcType=INTEGER},
@@ -208,8 +218,9 @@
     set id = #{record.id,jdbcType=INTEGER},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
-      number = #{record.number,jdbcType=INTEGER},
-      name_list = #{record.nameList,jdbcType=VARCHAR},
+    class_name = #{record.className,jdbcType=VARCHAR},
+      presenter = #{record.presenter,jdbcType=VARCHAR},
+      introduction = #{record.introduction,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=INTEGER},
       created_at = #{record.createdAt,jdbcType=TIMESTAMP},
       updated_at = #{record.updatedAt,jdbcType=TIMESTAMP}
@@ -226,11 +237,14 @@
       <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="number != null">
-        number = #{number,jdbcType=INTEGER},
+      <if test="className != null">
+        #{class_name,jdbcType=VARCHAR},
       </if>
-      <if test="nameList != null">
-        name_list = #{nameList,jdbcType=VARCHAR},
+      <if test="presenter != null">
+        #{presenter,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null">
+        #{introduction,jdbcType=VARCHAR},
       </if>
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
@@ -248,8 +262,9 @@
     update order
     set start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
-      number = #{number,jdbcType=INTEGER},
-      name_list = #{nameList,jdbcType=VARCHAR},
+      class_name = #{className,jdbcType=VARCHAR},
+      presenter = #{presenter,jdbcType=VARCHAR},
+      introduction = #{introduction,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=INTEGER},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
@@ -262,8 +277,8 @@
 
     <!--新增预约-->
     <insert id="save" parameterType="org.sacc.SaccHome.mbg.model.Order" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO `order` (start_time,end_time,number,name_list,user_id,created_at,updated_at)
-        VALUES (#{startTime},#{endTime},#{number},#{nameList},#{userId},current_timestamp(),current_timestamp());
+        INSERT INTO `order` (start_time,end_time,class_name,presenter,introduction,created_at,updated_at)
+        VALUES (#{startTime},#{endTime},#{className},#{presenter},#{introduction},current_timestamp(),current_timestamp());
     </insert>
 
     <!--查询是否存在重复的时间段-->
