@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.sacc.SaccHome.mbg.model.Order;
 import org.sacc.SaccHome.mbg.model.OrderExample;
+import org.sacc.SaccHome.mbg.model.PageParam;
 
 @Mapper
 public interface OrderMapper {
@@ -35,7 +36,9 @@ public interface OrderMapper {
      * 显示七天内的预约
      * @return
      */
-    List<Order> findNextWeek();
+    List<Order> findNextWeek(PageParam pageParam);
+
+    int getCount();
 
     /**
      * 新增预约

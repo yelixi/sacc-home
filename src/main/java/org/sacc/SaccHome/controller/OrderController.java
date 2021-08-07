@@ -4,17 +4,16 @@ package org.sacc.SaccHome.controller;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.RoleEnum;
 import org.sacc.SaccHome.mbg.model.Order;
+import org.sacc.SaccHome.mbg.model.Page;
 import org.sacc.SaccHome.service.OrderService;
 import org.sacc.SaccHome.util.RoleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 
 @RestController
@@ -31,13 +30,13 @@ public class OrderController {
      */
     @GetMapping ("/getOrder")
     @ResponseBody
-    public CommonResult<List<Order>> findNextWeek(@RequestHeader String token){
+    public CommonResult<Page<Order>> findNextWeek(int currentPage,@RequestHeader String token){
         if(roleUtil.hasRole(token, RoleEnum.MEMBER)) {
-            List<Order> order = orderService.findNextWeek();
-            if (CollectionUtils.isEmpty(order)) {
+            Page<Order> page = orderService.findNextWeek(currentPage);
+            if (page.getTotalNumber()==0) {
                 return CommonResult.success(null, "最近七天内无预约");
             } else {
-                return CommonResult.success(order);
+                return CommonResult.success(page);
             }
         }else {
             return CommonResult.unauthorized(null);

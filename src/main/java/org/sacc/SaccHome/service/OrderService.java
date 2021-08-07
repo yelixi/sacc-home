@@ -1,14 +1,14 @@
 package org.sacc.SaccHome.service;
 
 import org.sacc.SaccHome.mbg.model.Order;
+import org.sacc.SaccHome.mbg.model.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public interface OrderService {
 
-    public List<Order> findNextWeek();
+    public Page<Order> findNextWeek(int currentPage);
 
     public Order save(Order order);
 
