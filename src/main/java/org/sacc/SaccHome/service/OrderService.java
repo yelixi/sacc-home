@@ -14,8 +14,6 @@ public interface OrderService {
 
     Boolean judgeTimeCorrect(Order order);
 
-    int findIdByIndex(int index);
-
     void deleteById(int id);
 
     void update(Order order);

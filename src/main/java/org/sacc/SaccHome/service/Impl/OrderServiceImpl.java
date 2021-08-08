@@ -54,11 +54,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int findIdByIndex(int index) {
-        return ordermapper.findIdByIndex(index).getId();
-    }
-
-    @Override
     public void deleteById(int id) {
         ordermapper.deleteById(id);
     }

@@ -83,14 +83,13 @@ public class OrderController {
 
     /**
      * 删除预约
-     * @param index
+     * @param id
      * @param token
      * @return
      */
     @DeleteMapping("/deleteOrder")
-    public CommonResult deleteByIndex(int index,@RequestHeader String token){
+    public CommonResult deleteByIndex(int id,@RequestHeader String token){
         if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
-            int id=orderService.findIdByIndex(index);
             orderService.deleteById(id);
             return CommonResult.success(null);
         }else{
@@ -101,15 +100,14 @@ public class OrderController {
     /**
      * 更新预约
      * @param order
-     * @param index
+     * @param id
      * @param token
      * @return
      * @throws ParseException
      */
     @PutMapping("/updateOrder")
-    public CommonResult update(Order order,int index,@RequestHeader String token) throws ParseException {
+    public CommonResult update(Order order,int id,@RequestHeader String token) throws ParseException {
         if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
-            int id=orderService.findIdByIndex(index);
             order.setId(id);    //设置order的id，根据这个去更新
             orderService.deleteTimeById(id);      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
             String statrTime=order.getStartTime();
