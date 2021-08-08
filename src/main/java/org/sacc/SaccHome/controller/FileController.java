@@ -54,7 +54,7 @@ public class FileController {
                 System.out.println("文件夹还没存在");
                 minioClient.makeBucket(bucketname);
             }
-            minioClient.putObject(bucketname, file.getName(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
+            minioClient.putObject(bucketname, file.getOriginalFilename(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
             return CommonResult.success("ok");
         }   catch(MinioException e) {
             System.out.println("Error occurred: " + e);
@@ -103,21 +103,50 @@ public class FileController {
         }
 
     }
+    @GetMapping(value = "/downloadShareFile")
+    public CommonResult<String> download(@RequestParam("filename") String filename, HttpServletResponse resp) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+        String bucketname = "share";
+        try {
+            MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
+            if (minioClient.bucketExists(bucketname)) {
+                //得到bucket里test中filename的文件流
+                InputStream in = minioClient.getObject(bucketname, filename, 0L);
+                //读文件流
+                byte[] buf = new byte[16384];
+                int bytesRead;
+                resp.reset();
+                //Content-disposition 是 MIME 协议的扩展，MIME 协议指示 MIME 用户代理如何显示附加的文件。
+                // Content-disposition其实可以控制用户请求所得的内容存为一个文件的时候提供一个默认的文件名，
+                // 文件直接在浏览器上显示或者在访问时弹出文件下载对话框。
+                resp.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8));
+                resp.setContentType("application/x-msdownload");
+                resp.setCharacterEncoding("utf-8");
+                OutputStream out = new BufferedOutputStream(resp.getOutputStream());
+                while ((bytesRead = in.read(buf, 0, buf.length)) >= 0) {
+                    out.write(buf, 0, bytesRead);//将缓冲区的数据输出到客户端浏览器
+                }
+                out.close();
+                in.close();
+                System.out.println("true");
+                return CommonResult.success("true");
+            } else{
+                System.out.println("false");
+                return CommonResult.failed("不存在的bucketname");
+            }
+        }catch (MinioException e) {
+            System.out.println("Error occurred: " + e);
+            return CommonResult.failed("Error occurred: " + e);
+        }
+    }
 
     @PostMapping("/upload")
     public CommonResult<Object> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         FileTask fileTask = fileTaskService.getFileTask(fileTaskId);
         String fileName = file.getOriginalFilename();
         assert fileName != null;
-        String[] filename = fileName.split("\\.");
-        StringBuilder newFileName = new StringBuilder();
-        for(int i=0;i<filename.length;i++){
-           if(i==filename.length-2)
-               newFileName.append(filename[i]).append(fileTask.getRule());
-           else if(i==filename.length-1)
-               newFileName.append(".").append(filename[i]);
-           newFileName.append(filename[i]);
-        }
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String org = fileName.substring(0,fileName.lastIndexOf("."));
+        String newFileName = org+fileTask.getRule()+"."+suffix;
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
             boolean isExist = minioClient.bucketExists(bucketname);
@@ -128,12 +157,12 @@ public class FileController {
                 System.out.println("文件夹还没存在");
                 minioClient.makeBucket(bucketname);
             }
-            minioClient.putObject(bucketname, newFileName.toString(), file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
+            minioClient.putObject(bucketname, newFileName, file.getInputStream(), file.getInputStream().available(), "application/octet-stream");
             System.out.println("ok");
             String url = "http://116.62.110.191:8888" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(newFileName.toString());
             File f = new File();
             f.setPath(url);
-            f.setFileName(newFileName.toString());
+            f.setFileName(newFileName);
             f.setFileTaskId(fileTaskId);
             f.setCreatedAt(LocalDateTime.now());
             f.setUpdatedAt(LocalDateTime.now());
@@ -185,6 +214,7 @@ public class FileController {
             minioClient.statObject(bucketname, filename);
             minioClient.removeObject(bucketname, filename);
             System.out.println("successfully removed " + bucketname + "/" + filename);
+            fileMapper.deleteByFileName(filename);
             return CommonResult.success("successfully removed " + bucketname + "/" + filename);
         }
         catch (MinioException e) {
