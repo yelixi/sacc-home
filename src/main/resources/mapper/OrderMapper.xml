@@ -270,9 +270,26 @@
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <!--查询七天内的预约-->
-  <select id="findNextWeek" resultMap="BaseResultMap">
-        SELECT * FROM `order` WHERE To_Days(start_time) - To_Days(current_timestamp()) &lt;= 7 AND To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0;
+
+    <!--查询七天内的预约-->
+    <select id="findNextWeek" parameterType="org.sacc.SaccHome.mbg.model.PageParam" resultMap="BaseResultMap">
+      SELECT
+      *
+      FROM
+      `order`
+      WHERE
+        To_Days(start_time) - To_Days(current_timestamp()) &lt;= 7 AND To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0
+      ORDER BY
+      id
+      LIMIT #{beginLine} , #{pageSize}
+    </select>
+
+    <!--七天内的预约总数-->
+    <select id="getCount" resultType="java.lang.Integer">
+      SELECT
+      count(1)
+      FROM `order`
+      WHERE To_Days(start_time) - To_Days(current_timestamp()) &lt;= 7 AND To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0
     </select>
 
     <!--新增预约-->
@@ -288,4 +305,35 @@
             (start_time &lt;= #{startTime} AND end_time &gt;= #{endTime}) OR
             (end_time &gt;= #{startTime} AND end_time &lt;= #{endTime})
     </select>
+
+    <!--按照行数查找数据的id-->
+    <select id="findIdByIndex" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT id FROM `order` LIMIT #{index},1;
+    </select>
+
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+      DELETE FROM `order` WHERE id=#{id};
+    </delete>
+
+    <update id="update" parameterType="org.sacc.SaccHome.mbg.model.Order">
+      update `order`
+      set start_time = #{startTime,jdbcType=TIMESTAMP},
+          end_time = #{endTime,jdbcType=TIMESTAMP},
+          class_name = #{className,jdbcType=VARCHAR},
+          presenter = #{presenter,jdbcType=VARCHAR},
+          introduction = #{introduction,jdbcType=VARCHAR},
+          updated_at = current_timestamp()
+      where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="deleteTimeById" parameterType="java.lang.Integer">
+      update `order`
+      set start_time = null,
+          end_time = null
+      where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+
 </mapper>
