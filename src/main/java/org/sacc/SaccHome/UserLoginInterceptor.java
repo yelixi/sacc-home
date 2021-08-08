@@ -41,4 +41,10 @@ public class UserLoginInterceptor implements HandlerInterceptor {
             throw  new BusinessException(ResultCode.TOKEN_IS_PASSED);
         return username.equals("admin") && role.equals("admin")&&b;
     }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control","no-cache");
+    }
 }
