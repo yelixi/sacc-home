@@ -1,8 +1,11 @@
 package org.sacc.SaccHome.service.Impl;
 
 
+
 import org.sacc.SaccHome.mbg.mapper.OrderMapper;
 import org.sacc.SaccHome.mbg.model.Order;
+import org.sacc.SaccHome.mbg.model.Page;
+import org.sacc.SaccHome.mbg.model.PageParam;
 import org.sacc.SaccHome.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +18,19 @@ public class OrderServiceImpl implements OrderService {
     OrderMapper ordermapper;
 
     @Override
-    public List<Order> findNextWeek() {
-        return ordermapper.findNextWeek();
+    public Page<Order> findNextWeek(int currentPage) {
+        PageParam pageParam = new PageParam();
+        Page<Order> page = new Page<Order>();
+        pageParam.setCurrentPage(currentPage);
+        page.setList(ordermapper.findNextWeek(pageParam));
+        page.setCurrentPage(currentPage);
+        page.setTotalNumber(ordermapper.getCount());
+        if(ordermapper.getCount() % pageParam.getPageSize()==0){
+            page.setTotalPage(ordermapper.getCount() /pageParam.getPageSize());
+        }else{
+            page.setTotalPage(ordermapper.getCount() /pageParam.getPageSize() + 1);
+        }
+        return page;
     }
 
     @Override
@@ -37,5 +51,25 @@ public class OrderServiceImpl implements OrderService {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public int findIdByIndex(int index) {
+        return ordermapper.findIdByIndex(index).getId();
+    }
+
+    @Override
+    public void deleteById(int id) {
+        ordermapper.deleteById(id);
+    }
+
+    @Override
+    public void update(Order order) {
+        ordermapper.update(order);
+    }
+
+    @Override
+    public void deleteTimeById(int id) {
+        ordermapper.deleteTimeById(id);
     }
 }
