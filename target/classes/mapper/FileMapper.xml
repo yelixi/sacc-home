@@ -86,7 +86,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from file
     where id = #{id,jdbcType=INTEGER}
@@ -105,10 +105,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into file (file_name, user_id, file_task_id, 
+    insert into file (file_name, user_id, file_task_id,
       path, created_at, updated_at
       )
-    values (#{fileName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{fileTaskId,jdbcType=INTEGER}, 
+    values (#{fileName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{fileTaskId,jdbcType=INTEGER},
       #{path,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -243,4 +243,8 @@
   <select id="selectList"  resultType="org.sacc.SaccHome.mbg.model.File">
     SELECT * FROM file
   </select>
+  <delete id="deleteByFileName" parameterType="java.lang.String">
+    delete from file
+    where file_name = #{fileName,jdbcType=VARCHAR}
+  </delete>
 </mapper>

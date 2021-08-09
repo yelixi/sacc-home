@@ -4,8 +4,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-<!--    改为自己本地的mysql-connector路径    -->
-    <classPathEntry location="C:\Users\weiwo20010101\.m2\repository\mysql\mysql-connector-java\8.0.25\mysql-connector-java-8.0.25.jar" />
+    <classPathEntry location="/C:/Users/86153/Downloads/mysql-connector-java-5.1.6-bin.jar" />
 
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
@@ -15,8 +14,7 @@
         </commentGenerator>
 
 
-        <!--  改为自己的mysql用户名和密码  -->
-        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://127.0.0.1:3306/sh?characterEncoding=utf-8"
                         userId="root"
                         password="root">
@@ -26,32 +24,20 @@
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="org.sacc.SaccHome.mbg.model" targetProject="C:\Users\weiwo20010101\Desktop\项目\sacc-home-master\src\main\java">
+        <javaModelGenerator targetPackage="org.sacc.SaccHome.mbg.model" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
 <!--            <property name="trimStrings" value="true" />-->
         </javaModelGenerator>
-<!--        指定生成mapper.xml的路径-->
-        <sqlMapGenerator targetPackage="mapper"  targetProject="C:\Users\weiwo20010101\Desktop\项目\sacc-home-master\src\main\resources">
+
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src/main/resources">
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
-<!--        指定生成mapper接口的路径-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="org.sacc.SaccHome.mbg.mapper"  targetProject="C:\Users\weiwo20010101\Desktop\项目\sacc-home-master\src\main\java">
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.sacc.SaccHome.mbg.mapper"  targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
-        <table tableName="file_task">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="file">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="order">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
-        <table tableName="user">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
 
-<!--        <table tableName="user" domainObjectName="User" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false"/>-->
+        <table tableName="user_info" domainObjectName="UserInfo" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false"/>
         <!--<table tableName="user_focus" domainObjectName="UserFocus" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
             <columnOverride column="colleges" javaType="java.lang.String" jdbcType="VARCHAR" />
             <columnOverride column="professions" javaType="java.lang.String" jdbcType="LONGVARBINARY" />

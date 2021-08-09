@@ -1,6 +1,6 @@
 package org.sacc.SaccHome.controller;
 
-import cn.hutool.jwt.Claims;
+import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.RoleEnum;
@@ -65,8 +65,8 @@ public class UserController {
 
     @GetMapping("/getUserInfo")
     public CommonResult<User> getUserInfo(@RequestHeader String token){
-        Claims claims = (Claims) jwtToken.getClaimByToken(token);
-        String username = (String) claims.getClaim("username");
+        Claims claims = jwtToken.getClaimByToken(token);
+        String username = (String) claims.get("username");
         return CommonResult.success(userService.getUserInfo(username));
     }
 

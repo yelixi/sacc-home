@@ -80,7 +80,7 @@ public class FileController {
             for (Result<Item> result : results) {
                 Item item = result.get();
                 map.put("filename",item.objectName());
-                map.put("url","http://116.62.110.191:8888" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(item.objectName(), StandardCharsets.UTF_8));
+                map.put("url","http://116.62.110.191:8888" + "/download/" + "?"+"bucketname=share"+"&" + "filename"+ "=" +URLEncoder.encode(item.objectName(), StandardCharsets.UTF_8));
             }
             System.out.println(url);
             return CommonResult.success(url);

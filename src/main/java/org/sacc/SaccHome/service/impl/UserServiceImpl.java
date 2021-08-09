@@ -139,6 +139,7 @@ public class UserServiceImpl implements UserService {
     public User getUserInfo(String username) {
         User user = userMapper.selectUserByUserName(username).get(0);
         user.setPassword("******");
+        user.setSalt("******");
         return user;
     }
 
