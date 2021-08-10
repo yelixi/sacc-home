@@ -27,7 +27,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfoVo getThis(String username) {
         User u = userService.getUserInfo(username);
         UserInfoVo userInfoVo = new UserInfoVo(u);
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(u.getId());
+        UserInfo userInfo = userInfoMapper.selectByUserId(u.getId());
         userInfoVo.setUserInfo(userInfo);
         return userInfoVo;
     }
@@ -36,7 +36,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfoVo getOne(Integer userId) {
         User u = userService.getUser(userId);
         UserInfoVo userInfoVo = new UserInfoVo(u);
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(userId);
+        UserInfo userInfo = userInfoMapper.selectByUserId(userId);
         userInfoVo.setUserInfo(userInfo);
         return userInfoVo;
     }
@@ -54,8 +54,15 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public String uploadAvatar(String username, String url) {
         User u = userService.getUserInfo(username);
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(u.getId());
-        userInfo.setUserId(u.getId());
+        UserInfo userInfo = userInfoMapper.selectByUserId(u.getId());
+        if(userInfo==null) {
+            UserInfo userInfo1 = new UserInfo();
+            userInfo1.setUserId(u.getId());
+            userInfo1.setImgUrl(url);
+            if (userInfoMapper.updateByPrimaryKeySelective(userInfo1)==1)
+                return url;
+        }
+        assert userInfo != null;
         userInfo.setImgUrl(url);
         if (userInfoMapper.updateByPrimaryKeySelective(userInfo)==1)
             return url;

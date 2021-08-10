@@ -33,7 +33,7 @@ logging:
     org.sacc.SaccHome.mapper: debug
 URL: http://127.0.0.1:8080
 server:
-  port: 8888
+  port: 8080
 jwt:
   secret: JO6HN3NGIU25G2FIG8V7VD6CK9B6T2Z5
   expire: 60000
