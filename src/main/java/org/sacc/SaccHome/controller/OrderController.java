@@ -48,33 +48,25 @@ public class OrderController {
      * @return
      */
     @GetMapping("/applyOrder")
-    public CommonResult <Order> save(Order order,@RequestHeader String token) throws ParseException{
+    public CommonResult <Order> save(Order order,@RequestHeader String token) throws ParseException {
         if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
-            String statrTime=order.getStartTime();
-            String endTime=order.getEndTime();
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date1 = sf.parse(statrTime);
-            Date date2 = sf.parse(endTime);
-            if(date1.before(date2)){         //判断起始时间是否早于结束时间
-                if(date1.after(new Date())) {       //判断起始时间是否比当前时间晚
-                    if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否正确
-                        Timestamp time = Timestamp.valueOf(LocalDateTime.now());
-                        order.setCreatedAt(time);
-                        order.setUpdatedAt(time);   //设置当前的时间
-                        Order save = orderService.save(order);
-                        if (save != null) {
-                            return CommonResult.success(save, "新增预约成功");
-                        } else {
-                            return CommonResult.failed("新增预约失败");
-                        }
+            if(orderService.judgeTime(order).equals("时间格式正确")) {
+                if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否已被预约
+                    Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+                    order.setCreatedAt(time);
+                    order.setUpdatedAt(time);   //设置当前的时间
+                    order.setUserId(orderService.getUserIdByToken(token));   //解析token，设置userId
+                    Order save = orderService.save(order);
+                    if (save != null) {
+                        return CommonResult.success(save, "新增预约成功");
                     } else {
-                        return CommonResult.failed("该时间段已被预约");
+                        return CommonResult.failed("新增预约失败");
                     }
-                }else{
-                    return CommonResult.failed("请输入今日之后的时间段");
+                } else {
+                    return CommonResult.failed("该时间段已被预约");
                 }
             }else{
-                return CommonResult.failed("起始时间需早于结束时间");
+                return CommonResult.failed(orderService.judgeTime(order));
             }
         }else{
             return CommonResult.unauthorized(null);
@@ -89,9 +81,17 @@ public class OrderController {
      */
     @DeleteMapping("/deleteOrder")
     public CommonResult deleteByIndex(int id,@RequestHeader String token){
-        if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+        if(roleUtil.hasRole(token, RoleEnum.ADMIN)){
             orderService.deleteById(id);
-            return CommonResult.success(null);
+            return CommonResult.success(null,"删除预约成功");
+        }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+            int userId=orderService.getUserIdByToken(token);
+            if(userId==id){
+                orderService.deleteById(id);
+                return CommonResult.success(null,"删除预约成功");
+            }else{
+                return CommonResult.failed("此预约并非该用户创建，无法删除");
+            }
         }else{
             return CommonResult.unauthorized(null);
         }
@@ -107,27 +107,36 @@ public class OrderController {
      */
     @PutMapping("/updateOrder")
     public CommonResult update(Order order,int id,@RequestHeader String token) throws ParseException {
-        if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+        if(roleUtil.hasRole(token, RoleEnum.ADMIN)){
             order.setId(id);    //设置order的id，根据这个去更新
             orderService.deleteTimeById(id);      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
-            String statrTime=order.getStartTime();
-            String endTime=order.getEndTime();
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date1 = sf.parse(statrTime);
-            Date date2 = sf.parse(endTime);
-            if(date1.before(date2)){         //判断起始时间是否早于结束时间
-                if(date1.after(new Date())) {       //判B断起始时间是否比当前时间晚
-                    if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否正确
+            if (orderService.judgeTime(order).equals("时间格式正确")) {
+                if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否已被预约
+                    orderService.update(order);
+                    return CommonResult.success(null, "更新预约成功");
+                } else {
+                    return CommonResult.failed("该时间段已被预约");
+                }
+            } else {
+                return CommonResult.failed(orderService.judgeTime(order));
+            }
+        }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+            int userId=orderService.getUserIdByToken(token);
+            if(userId==id) {
+                order.setId(id);    //设置order的id，根据这个去更新
+                orderService.deleteTimeById(id);      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
+                if (orderService.judgeTime(order).equals("时间格式正确")) {
+                    if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否已被预约
                         orderService.update(order);
-                        return CommonResult.success(null);
+                        return CommonResult.success(null, "更新预约成功");
                     } else {
                         return CommonResult.failed("该时间段已被预约");
                     }
-                }else{
-                    return CommonResult.failed("请输入今日之后的时间段");
+                } else {
+                    return CommonResult.failed(orderService.judgeTime(order));
                 }
             }else{
-                return CommonResult.failed("起始时间需早于结束时间");
+                return CommonResult.failed("此预约并非该用户创建，无法修改");
             }
         }else{
             return CommonResult.unauthorized(null);
