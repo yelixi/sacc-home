@@ -46,8 +46,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         User u = userService.getUserInfo(username);
         userInfo.setUserId(u.getId());
         UserInfo userInfo1 = userInfoMapper.selectByUserId(u.getId());
-        if(userInfo1!=null)
-            return userInfoMapper.updateByPrimaryKeySelective(userInfo)==1;
+        if(userInfo1!=null) {
+            userInfo.setId(userInfo1.getId());
+            return userInfoMapper.updateByPrimaryKeySelective(userInfo) == 1;
+        }
         else return userInfoMapper.insert(userInfo)==1;
     }
 

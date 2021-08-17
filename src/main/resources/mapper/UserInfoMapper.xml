@@ -7,7 +7,7 @@
     <result column="department" jdbcType="VARCHAR" property="department" />
     <result column="real_name" jdbcType="VARCHAR" property="realName" />
     <result column="student_id" jdbcType="VARCHAR" property="studentId" />
-    <result column="phone_number" jdbcType="INTEGER" property="phoneNumber" />
+    <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
     <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
   </resultMap>
@@ -35,7 +35,7 @@
       real_name, student_id, phone_number,
       img_url, user_id)
     values (#{id,jdbcType=INTEGER}, #{nick,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR},
-      #{realName,jdbcType=VARCHAR}, #{studentId,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=INTEGER},
+      #{realName,jdbcType=VARCHAR}, #{studentId,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR},
       #{imgUrl,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="org.sacc.SaccHome.mbg.model.UserInfo">
@@ -83,7 +83,7 @@
         #{studentId,jdbcType=VARCHAR},
       </if>
       <if test="phoneNumber != null">
-        #{phoneNumber,jdbcType=INTEGER},
+        #{phoneNumber,jdbcType=VARCHAR},
       </if>
       <if test="imgUrl != null">
         #{imgUrl,jdbcType=VARCHAR},
@@ -109,7 +109,7 @@
         student_id = #{studentId,jdbcType=VARCHAR},
       </if>
       <if test="phoneNumber != null">
-        phone_number = #{phoneNumber,jdbcType=INTEGER},
+        phone_number = #{phoneNumber,jdbcType=VARCHAR},
       </if>
       <if test="imgUrl != null">
         img_url = #{imgUrl,jdbcType=VARCHAR},
@@ -126,7 +126,7 @@
       department = #{department,jdbcType=VARCHAR},
       real_name = #{realName,jdbcType=VARCHAR},
       student_id = #{studentId,jdbcType=VARCHAR},
-      phone_number = #{phoneNumber,jdbcType=INTEGER},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
       img_url = #{imgUrl,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}

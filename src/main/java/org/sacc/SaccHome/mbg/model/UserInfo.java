@@ -14,7 +14,7 @@ public class UserInfo {
 
     private String studentId;
 
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     private String imgUrl;
 
