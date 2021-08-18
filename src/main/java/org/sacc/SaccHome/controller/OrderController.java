@@ -26,11 +26,13 @@ public class OrderController {
 
     /**
      * 查询七天内的预约
+     * @param currentPage
+     * @param token
      * @return
      */
     @GetMapping ("/getOrder")
     @ResponseBody
-    public CommonResult<Page<Order>> findNextWeek(int currentPage,@RequestHeader String token){
+    public CommonResult<Page<Order>> findNextWeek(@RequestParam int currentPage,@RequestHeader String token){
         if(roleUtil.hasRole(token, RoleEnum.MEMBER)) {
             Page<Order> page = orderService.findNextWeek(currentPage);
             if (page.getTotalNumber()==0) {
@@ -45,10 +47,13 @@ public class OrderController {
 
     /**
      * 新增预约
+     * @param order
+     * @param token
      * @return
+     * @throws ParseException
      */
-    @GetMapping("/applyOrder")
-    public CommonResult <Order> save(Order order,@RequestHeader String token) throws ParseException {
+    @PostMapping("/applyOrder")
+    public CommonResult <Order> save(@RequestBody Order order,@RequestHeader String token) throws ParseException {
         if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
             if(orderService.judgeTime(order).equals("时间格式正确")) {
                 if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否已被预约
@@ -76,17 +81,18 @@ public class OrderController {
     /**
      * 删除预约
      * @param id
+     * @param userId
      * @param token
      * @return
      */
     @DeleteMapping("/deleteOrder")
-    public CommonResult deleteByIndex(int id,@RequestHeader String token){
+    public CommonResult deleteByIndex(@RequestParam int id,@RequestParam int userId,@RequestHeader String token){
         if(roleUtil.hasRole(token, RoleEnum.ADMIN)){
             orderService.deleteById(id);
             return CommonResult.success(null,"删除预约成功");
         }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
-            int userId=orderService.getUserIdByToken(token);
-            if(userId==id){
+            int userIdByToken=orderService.getUserIdByToken(token);
+            if(userId==userIdByToken){
                 orderService.deleteById(id);
                 return CommonResult.success(null,"删除预约成功");
             }else{
@@ -100,16 +106,14 @@ public class OrderController {
     /**
      * 更新预约
      * @param order
-     * @param id
      * @param token
      * @return
      * @throws ParseException
      */
     @PutMapping("/updateOrder")
-    public CommonResult update(Order order,int id,@RequestHeader String token) throws ParseException {
+    public CommonResult update(@RequestBody Order order,@RequestHeader String token) throws ParseException {
         if(roleUtil.hasRole(token, RoleEnum.ADMIN)){
-            order.setId(id);    //设置order的id，根据这个去更新
-            orderService.deleteTimeById(id);      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
+            orderService.deleteTimeById(order.getId());      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
             if (orderService.judgeTime(order).equals("时间格式正确")) {
                 if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否已被预约
                     orderService.update(order);
@@ -121,10 +125,9 @@ public class OrderController {
                 return CommonResult.failed(orderService.judgeTime(order));
             }
         }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
-            int userId=orderService.getUserIdByToken(token);
-            if(userId==id) {
-                order.setId(id);    //设置order的id，根据这个去更新
-                orderService.deleteTimeById(id);      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
+            int userIdByToken=orderService.getUserIdByToken(token);
+            if(order.getUserId()==userIdByToken) {
+                orderService.deleteTimeById(order.getId());      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
                 if (orderService.judgeTime(order).equals("时间格式正确")) {
                     if (orderService.judgeTimeCorrect(order)) {   //判断输入的时间段是否已被预约
                         orderService.update(order);
