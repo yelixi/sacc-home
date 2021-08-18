@@ -71,12 +71,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateEmailByUsername(String username, String email) {
         //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
-        String value = null;
+        String value;
         try {
             value = (String) redisTemplate.opsForValue().get(username);
         } catch (Exception e) {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
+        assert value != null;
         if (value.equals("true")) {
             userMapper.updateEmailByUsername(username, email);
         } else {
@@ -86,9 +87,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePasswordByUsername(String username, String oldPassword, String newPassword) {
-        //todo 等写登录和注册的xdm确定了密码加密方式后修改，目前仅作明文相等判断
-        if (userMapper.findPasswordByUsername(username) == oldPassword) {
-            userMapper.updatePasswordByUsername(username, newPassword,"");
+        if (userMapper.findPasswordByUsername(username).equals(oldPassword)) {
+            User user = userMapper.selectUserByUserName(username).get(0);
+            userMapper.updatePasswordByUsername(username, newPassword,user.getSalt());
         } else {
             throw new AuthenticationException(ResultCode.WRONG_PASSWORD);
         }
@@ -96,21 +97,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void forgetPassword(String username, String password) {
-        String value = null;
+        String value;
         try {
             value = (String) redisTemplate.opsForValue().get(username);
         } catch (Exception e) {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
         //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
+        assert value != null;
         if (value.equals("true")) {
-            //todo 等密码加密方式
-            userMapper.updatePasswordByUsername(username, password,"");
+            User user = userMapper.selectUserByUserName(username).get(0);
+            userMapper.updatePasswordByUsername(username, password,user.getSalt());
         } else {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
     }
-
     @Override
     public boolean judgeVerificationCode(String username, String inputVerificationCode) {
         String LocalVerificationCode = null;
