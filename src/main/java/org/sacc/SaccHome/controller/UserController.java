@@ -128,12 +128,12 @@ public class UserController {
     @PostMapping("registerAll")
 
     public CommonResult registerAll(MultipartFile file,@RequestHeader String token){
-        if(roleUtil.hasRole(token,RoleEnum.ADMIN)){
-        File file1 = MultipartFileToFile.multipartFileToFile(file);
-        String address = file1.getAbsolutePath();
+        if(roleUtil.hasRole(token,RoleEnum.ADMIN)) {
+            File file1 = MultipartFileToFile.multipartFileToFile(file);
+            String address = file1.getAbsolutePath();
 //        MultipartFileToFile.delteTempFile(file1);
-        //缓存释放有点问题，但应该没有关系吧
-        return userService.registerAll(address);
+            //缓存释放有点问题，但应该没有关系吧
+            return userService.registerAll(address);
         } else {
             return CommonResult.unauthorized(null);
         }
