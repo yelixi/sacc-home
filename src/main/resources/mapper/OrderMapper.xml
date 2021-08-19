@@ -306,11 +306,6 @@
             (end_time &gt;= #{startTime} AND end_time &lt;= #{endTime})
     </select>
 
-    <!--按照行数查找数据的id-->
-    <select id="findIdByIndex" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-      SELECT id FROM `order` LIMIT #{index},1;
-    </select>
-
     <!--根据id删除-->
     <delete id="deleteById" parameterType="java.lang.Integer">
       DELETE FROM `order` WHERE id=#{id};
@@ -327,6 +322,7 @@
       where id = #{id,jdbcType=INTEGER}
     </update>
 
+    <!--将要更新的预约的时间段设置为null-->
     <update id="deleteTimeById" parameterType="java.lang.Integer">
       update `order`
       set start_time = null,

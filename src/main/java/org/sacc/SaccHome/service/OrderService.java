@@ -4,21 +4,25 @@ import org.sacc.SaccHome.mbg.model.Order;
 import org.sacc.SaccHome.mbg.model.Page;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+
 
 @Service
 public interface OrderService {
 
-    public Page<Order> findNextWeek(int currentPage);
+    Page<Order> findNextWeek(int currentPage);
 
-    public Order save(Order order);
+    Order save(Order order);
 
     Boolean judgeTimeCorrect(Order order);
 
-    int findIdByIndex(int index);
+    String judgeTime(Order order) throws ParseException;
 
     void deleteById(int id);
 
     void update(Order order);
 
     void deleteTimeById(int id);
+
+    int getUserIdByToken(String token);
 }
