@@ -233,10 +233,26 @@ public class UserServiceImpl implements UserService {
         Workbook workbook = new HSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         int rowTotalCount = sheet.getLastRowNum();
+        Row rowAll = sheet.getRow(0);
+        int columnTotalCount = rowAll.getLastCellNum();
+        //判断哪一列是学号
+        int columnNum = 0;
+        for (int i = 0; i < columnTotalCount; i++) {
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell(i);
+            String temp = cell.getStringCellValue();
+            if(!temp.equals(null)){
+                if (temp.equals("学号")){
+                    columnNum = i;
+                }
+            } else {
+                return CommonResult.failed("未发现学号所在列，无法录入");
+            }
+        }
         int i = 1;
         for (i = 1;i<=rowTotalCount ; i++) {
             Row row = sheet.getRow(i);
-            Cell cell = row.getCell(0);
+            Cell cell = row.getCell(columnNum);
             String temp = cell.getStringCellValue();
             if (!temp.equals(null)) {
                 user.setUsername(temp);
