@@ -275,7 +275,7 @@
         where username = #{username}
     </select>
     <select id="findPasswordByUsername" resultType="java.lang.String">
-        select psssword
+        select password
         from user
         where username = #{username}
     </select>

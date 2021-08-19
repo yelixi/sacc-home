@@ -81,4 +81,5 @@ public class GlobalExceptionHandler {
     public CommonResult<ResultCode> businessException(BusinessException e){
         return CommonResult.error(e.getResultCode());
     }
+
 }

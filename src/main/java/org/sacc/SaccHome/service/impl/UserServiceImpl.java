@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.enums.RoleEnum;
-import org.sacc.SaccHome.exception.AuthenticationException;
 import org.sacc.SaccHome.exception.BusinessException;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
@@ -75,43 +74,46 @@ public class UserServiceImpl implements UserService {
         try {
             value = (String) redisTemplate.opsForValue().get(username);
         } catch (Exception e) {
-            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
+            throw new BusinessException(ResultCode.FAILED_VERIFICATION);
         }
         assert value != null;
         if (value.equals("true")) {
             userMapper.updateEmailByUsername(username, email);
         } else {
-            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
+            throw new BusinessException(ResultCode.FAILED_VERIFICATION);
         }
         return CommonResult.success(null);
     }
 
     @Override
     public CommonResult updatePasswordByUsername(String username, String oldPassword, String newPassword) {
-        if (userMapper.findPasswordByUsername(username).equals(oldPassword)) {
-            User user = userMapper.selectUserByUserName(username).get(0);
-            userMapper.updatePasswordByUsername(username, newPassword,user.getSalt());
+        String salt = userMapper.findSaltByUsername(username);
+        String oldMd5Password = SecureUtil.md5(oldPassword + salt);
+        if (oldMd5Password.equals(userMapper.findPasswordByUsername(username))) {
+            String newMd5Password = SecureUtil.md5(newPassword+salt);
+            userMapper.updatePasswordByUsername(username, newMd5Password, salt);
         } else {
-            throw new AuthenticationException(ResultCode.WRONG_PASSWORD);
+            throw new BusinessException(ResultCode.WRONG_PASSWORD);
         }
         return CommonResult.success(null);
     }
 
     @Override
     public CommonResult forgetPassword(String username, String password) {
+        String salt = userMapper.findSaltByUsername(username);
         String value;
         try {
             value = (String) redisTemplate.opsForValue().get(username);
         } catch (Exception e) {
-            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
+            throw new BusinessException(ResultCode.FAILED_VERIFICATION);
         }
         //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
         assert value != null;
         if (value.equals("true")) {
-            User user = userMapper.selectUserByUserName(username).get(0);
-            userMapper.updatePasswordByUsername(username, password,user.getSalt());
+            String md5Password = SecureUtil.md5(password + salt);
+            userMapper.updatePasswordByUsername(username, md5Password, salt);
         } else {
-            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
+            throw new BusinessException(ResultCode.FAILED_VERIFICATION);
         }
         return CommonResult.success(null);
     }
@@ -121,7 +123,7 @@ public class UserServiceImpl implements UserService {
         try {
             LocalVerificationCode = (String) redisTemplate.opsForValue().get(username);
         } catch (Exception e) {
-            throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
+            throw new BusinessException(ResultCode.FAILED_VERIFICATION);
         }
         if (LocalVerificationCode.equals(inputVerificationCode)) {
             //删除相应的key并返回true
