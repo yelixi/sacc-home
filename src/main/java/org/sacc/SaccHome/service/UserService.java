@@ -15,15 +15,15 @@ public interface UserService {
 
     String getEmailByUsername(String username);
 
-    void updateEmailByUsername(String username, String email);
+    CommonResult updateEmailByUsername(String username, String email);
 
-    void updatePasswordByUsername(String username, String oldPassword, String newPassword);
+    CommonResult updatePasswordByUsername(String username, String oldPassword, String newPassword);
 
-    void forgetPassword(String username,String password);
+    CommonResult forgetPassword(String username,String password);
 
-    boolean judgeVerificationCode(String username, String inputVerificationCode);
+    CommonResult judgeVerificationCode(String username, String inputVerificationCode);
 
-    void sendVerificationCodeEmail(String username);
+    CommonResult sendVerificationCodeEmail(String username);
 
     User getUserInfo(String username);
 
