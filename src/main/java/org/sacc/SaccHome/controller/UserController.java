@@ -39,51 +39,57 @@ public class UserController {
     private RoleUtil roleUtil;
 
     @PutMapping("/sendEmail")
-    public void sendEmail(String username) {
-        userService.sendVerificationCodeEmail(username);
+    public CommonResult sendEmail(@RequestHeader String token) {
+        String username = (String) jwtToken.getClaimByToken(token).get("username");
+        return userService.sendVerificationCodeEmail(username);
     }
 
     @PostMapping("/judgeCode")
-    public boolean judgeCode(String username, String code) {
+    public CommonResult judgeCode(@RequestHeader String token, String code) {
+        String username = (String) jwtToken.getClaimByToken(token).get("username");
         return userService.judgeVerificationCode(username, code);
     }
 
     @PutMapping("/updateEmail")
-    public void updateEmail(String email, String username) {
-        userService.updateEmailByUsername(email, username);
+    public CommonResult updateEmail(@RequestHeader String token, String email) {
+        String username = (String) jwtToken.getClaimByToken(token).get("username");
+        return userService.updateEmailByUsername(email, username);
     }
 
     @PostMapping("/forgetPassword")
-    public void forgetPassword(String username, String password) {
-        userService.forgetPassword(username, password);
+    public CommonResult forgetPassword(@RequestHeader String token, String password) {
+        String username = (String) jwtToken.getClaimByToken(token).get("username");
+        return userService.forgetPassword(username, password);
     }
 
     @PutMapping("/updatePassword")
-    public void updatePassword(String username, String oldPassword, String newPassword){
-        userService.updatePasswordByUsername(username,oldPassword,newPassword);
+    public CommonResult updatePassword(@RequestHeader String token, String oldPassword, String newPassword) {
+        String username = (String) jwtToken.getClaimByToken(token).get("username");
+        return userService.updatePasswordByUsername(username, oldPassword, newPassword);
     }
 
     @GetMapping("/getUserInfo")
-    public CommonResult<User> getUserInfo(@RequestHeader String token){
+    public CommonResult<User> getUserInfo(@RequestHeader String token) {
         Claims claims = jwtToken.getClaimByToken(token);
         String username = (String) claims.get("username");
         return CommonResult.success(userService.getUserInfo(username));
     }
 
     @GetMapping("/getUser")
-    public CommonResult<User> getUser(@RequestParam Integer id){
+    public CommonResult<User> getUser(@RequestParam Integer id) {
         return CommonResult.success(userService.getUser(id));
     }
 
     /**
      * 注册
+     *
      * @param username
      * @param password
      * @param email
      * @return CommonResult
      */
     @PostMapping("/register")
-    public CommonResult createAccount(String username, String password, String email){
+    public CommonResult createAccount(String username, String password, String email) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -93,31 +99,33 @@ public class UserController {
 
         Email e = new Email();
         e.setTo(email);
-        redisTemplate.opsForValue().set(username,e.getContent(),1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(username, e.getContent(), 1, TimeUnit.DAYS);
         return userService.createAccount(user, e);
     }
 
 
     /**
      * 验证码检验
+     *
      * @param username
      * @param inCode
      * @return
      */
     @PostMapping("/verification")
-    public CommonResult verifyAccount(String username, String inCode){
+    public CommonResult verifyAccount(String username, String inCode) {
         String code = (String) redisTemplate.opsForValue().get(username);
-        return userService.verifyAccount(username,code,inCode);
+        return userService.verifyAccount(username, code, inCode);
     }
 
     /**
      * 成功
+     *
      * @param username
      * @param password
      * @return
      */
     @PostMapping("/login")
-    public CommonResult loginAccount(String username, String password){
+    public CommonResult loginAccount(String username, String password) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -127,8 +135,8 @@ public class UserController {
     @SneakyThrows
     @PostMapping("registerAll")
 
-    public CommonResult registerAll(MultipartFile file,@RequestHeader String token){
-        if(roleUtil.hasRole(token,RoleEnum.ADMIN)) {
+    public CommonResult registerAll(MultipartFile file, @RequestHeader String token) {
+        if (roleUtil.hasRole(token, RoleEnum.ADMIN)) {
             File file1 = MultipartFileToFile.multipartFileToFile(file);
             String address = file1.getAbsolutePath();
 //        MultipartFileToFile.delteTempFile(file1);
@@ -140,11 +148,10 @@ public class UserController {
     }
 
     @PostMapping("/authorize")
-    public CommonResult<Boolean> authorize(@RequestParam Integer userId,@RequestParam String role,@RequestHeader String token){
-        if(roleUtil.hasRole(token, RoleEnum.ROOT)){
-            return CommonResult.success(userService.authorize(userId,role));
-        }
-        else
+    public CommonResult<Boolean> authorize(@RequestParam Integer userId, @RequestParam String role, @RequestHeader String token) {
+        if (roleUtil.hasRole(token, RoleEnum.ROOT)) {
+            return CommonResult.success(userService.authorize(userId, role));
+        } else
             return CommonResult.unauthorized(null);
     }
 }
