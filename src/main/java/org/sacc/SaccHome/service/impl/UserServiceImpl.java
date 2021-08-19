@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateEmailByUsername(String username, String email) {
-        //如果redis中对应value为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
+    public CommonResult updateEmailByUsername(String username, String email) {
+        //如果redis中对应value不为true，表示用户没有通过刚才的验证（防止用户直接通过URL修改）
         String value;
         try {
             value = (String) redisTemplate.opsForValue().get(username);
@@ -83,20 +83,22 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
+        return CommonResult.success(null);
     }
 
     @Override
-    public void updatePasswordByUsername(String username, String oldPassword, String newPassword) {
+    public CommonResult updatePasswordByUsername(String username, String oldPassword, String newPassword) {
         if (userMapper.findPasswordByUsername(username).equals(oldPassword)) {
             User user = userMapper.selectUserByUserName(username).get(0);
             userMapper.updatePasswordByUsername(username, newPassword,user.getSalt());
         } else {
             throw new AuthenticationException(ResultCode.WRONG_PASSWORD);
         }
+        return CommonResult.success(null);
     }
 
     @Override
-    public void forgetPassword(String username, String password) {
+    public CommonResult forgetPassword(String username, String password) {
         String value;
         try {
             value = (String) redisTemplate.opsForValue().get(username);
@@ -111,9 +113,10 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new AuthenticationException(ResultCode.FAILED_VERIFICATION);
         }
+        return CommonResult.success(null);
     }
     @Override
-    public boolean judgeVerificationCode(String username, String inputVerificationCode) {
+    public CommonResult judgeVerificationCode(String username, String inputVerificationCode) {
         String LocalVerificationCode = null;
         try {
             LocalVerificationCode = (String) redisTemplate.opsForValue().get(username);
@@ -123,17 +126,18 @@ public class UserServiceImpl implements UserService {
         if (LocalVerificationCode.equals(inputVerificationCode)) {
             //删除相应的key并返回true
             redisTemplate.opsForValue().set(username, "true", 1, TimeUnit.HOURS);
-            return true;
+            return CommonResult.success(null);
         }
-        return false;
+        return CommonResult.failed(ResultCode.FAILED_VERIFICATION);
     }
 
     @Override
-    public void sendVerificationCodeEmail(String username) {
+    public CommonResult sendVerificationCodeEmail(String username) {
         String email = this.getEmailByUsername(username);
         String verificationCode = VerificationCodeGenerator.getVerificationCode(6);
         redisTemplate.opsForValue().setIfAbsent(username, verificationCode, 1, TimeUnit.HOURS);
         emailService.sendSimpleMail(email, verificationCode);
+        return CommonResult.success(null);
     }
 
     @Override
