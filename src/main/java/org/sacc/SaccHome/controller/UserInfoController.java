@@ -157,4 +157,9 @@ public class UserInfoController {
             return CommonResult.failed("Error occurred: " + e);
         }
     }
+
+    @GetMapping("/getAvatar")
+    public CommonResult<String> getAvatar(@RequestHeader String token){
+        return CommonResult.success(userInfoService.getAvatar(token));
+    }
 }

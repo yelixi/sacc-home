@@ -16,4 +16,6 @@ public interface UserInfoService {
     boolean updateUserInfo(String username, UserInfo userInfo);
 
     String uploadAvatar(String username,String url);
+
+    String getAvatar(String token);
 }

@@ -1,10 +1,12 @@
 package org.sacc.SaccHome.service.Impl;
 
+import io.jsonwebtoken.Claims;
 import org.sacc.SaccHome.mbg.mapper.UserInfoMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.mbg.model.UserInfo;
 import org.sacc.SaccHome.service.UserInfoService;
 import org.sacc.SaccHome.service.UserService;
+import org.sacc.SaccHome.util.JwtToken;
 import org.sacc.SaccHome.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Resource
     private UserInfoMapper userInfoMapper;
+
+    @Resource
+    private JwtToken jwtToken;
 
     @Override
     public UserInfoVo getThis(String username) {
@@ -69,5 +74,14 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (userInfoMapper.updateByPrimaryKeySelective(userInfo)==1)
             return url;
         return "数据库异常";
+    }
+
+    @Override
+    public String getAvatar(String token) {
+        Claims claim = jwtToken.getClaimByToken(token);
+        String username = (String) claim.get("username");
+        User u = userService.getUserInfo(username);
+        UserInfo userInfo = userInfoMapper.selectByUserId(u.getId());
+        return userInfo.getImgUrl();
     }
 }
