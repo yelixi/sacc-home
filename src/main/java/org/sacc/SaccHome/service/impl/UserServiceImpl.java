@@ -159,12 +159,12 @@ public class UserServiceImpl implements UserService {
                 emailService.sendEmail(email);
                 return CommonResult.success(null, "操作成功，请输入验证码验证码");
             } else {
-                return CommonResult.failed("操作失败");
+                return CommonResult.validateFailed();
             }
         } else {
             emailService.sendEmail(email);
             userMapper.updatePassword(user.getUsername());
-            return CommonResult.failed("已经注册过,但未验证");
+            return CommonResult.verificationFailed(406,"注册未验证");
         }
     }
 

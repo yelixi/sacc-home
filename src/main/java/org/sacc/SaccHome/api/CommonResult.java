@@ -38,8 +38,8 @@ public class CommonResult<T> {
     /**
      * 成功返回结果
      *
-     * @param data 获取的数据
-     * @param  message 提示信息
+     * @param data    获取的数据
+     * @param message 提示信息
      */
     public static <T> CommonResult<T> success(T data, String message) {
         return new CommonResult<T>(ResultCode.SUCCESS.getCode(), message, data);
@@ -47,6 +47,7 @@ public class CommonResult<T> {
 
     /**
      * 失败返回结果
+     *
      * @param resultCode 错误码
      */
     public static <T> CommonResult<T> failed(ResultCode resultCode) {
@@ -55,6 +56,7 @@ public class CommonResult<T> {
 
     /**
      * 失败返回结果
+     *
      * @param message 提示信息
      */
     public static <T> CommonResult<T> failed(String message) {
@@ -77,6 +79,7 @@ public class CommonResult<T> {
 
     /**
      * 参数验证失败返回结果
+     *
      * @param message 提示信息
      */
     public static <T> CommonResult<T> validateFailed(String message) {
@@ -100,21 +103,28 @@ public class CommonResult<T> {
     /**
      * 出现异常时的返回结果
      */
-    public static <T> CommonResult<T> error(ResultCode resultCode){
-        return new CommonResult<T>(resultCode.getCode(),resultCode.getMessage());
+    public static <T> CommonResult<T> error(ResultCode resultCode) {
+        return new CommonResult<T>(resultCode.getCode(), resultCode.getMessage());
     }
 
     /**
      * 出现异常时的返回结果
      */
-    public static <T> CommonResult<T> error(long code,String message){
-        return new CommonResult<T>(code,message);
+    public static <T> CommonResult<T> error(long code, String message) {
+        return new CommonResult<T>(code, message);
     }
 
     /**
      * 密码错误
      */
-    public static <T> CommonResult<T> wrongPassword(long code,String message){
-        return new CommonResult<T>(code,message);
+    public static <T> CommonResult<T> wrongPassword(long code, String message) {
+        return new CommonResult<T>(code, message);
+    }
+
+    /**
+     * 未验证
+     */
+    public static <T> CommonResult<T> verificationFailed(long code, String message) {
+        return new CommonResult<T>(code, message);
     }
 }
