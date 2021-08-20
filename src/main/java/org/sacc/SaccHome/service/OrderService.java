@@ -25,4 +25,6 @@ public interface OrderService {
     void deleteTimeById(int id);
 
     int getUserIdByToken(String token);
+
+    Order getOrderById(int id);
 }

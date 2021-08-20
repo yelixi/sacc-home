@@ -60,4 +60,6 @@ public interface OrderMapper {
     int update(Order order);
 
     void deleteTimeById(int id);
+
+    Order getOrderById(int id);
 }

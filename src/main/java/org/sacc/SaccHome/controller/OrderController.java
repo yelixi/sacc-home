@@ -112,6 +112,7 @@ public class OrderController {
      */
     @PutMapping("/updateOrder")
     public CommonResult update(@RequestBody Order order,@RequestHeader String token) throws ParseException {
+        Order orderTemp=orderService.getOrderById(order.getId());     //一个临时的order用来存放数据库中原本的信息，因为后面该数据的startTime和endTime会被删除
         if(roleUtil.hasRole(token, RoleEnum.ADMIN)){
             orderService.deleteTimeById(order.getId());      //将startTime和endTime设置为null，防止对下面时间的判断产生影响
             if (orderService.judgeTime(order).equals("时间格式正确")) {
@@ -119,9 +120,11 @@ public class OrderController {
                     orderService.update(order);
                     return CommonResult.success(null, "更新预约成功");
                 } else {
+                    orderService.update(orderTemp);         //时间段输入错误的话，就要用临时的order去更新，使startTime和endTime复原
                     return CommonResult.failed("该时间段已被预约");
                 }
             } else {
+                orderService.update(orderTemp);         //时间段输入错误的话，就要用临时的order去更新，使startTime和endTime复原
                 return CommonResult.failed(orderService.judgeTime(order));
             }
         }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
@@ -133,9 +136,11 @@ public class OrderController {
                         orderService.update(order);
                         return CommonResult.success(null, "更新预约成功");
                     } else {
+                        orderService.update(orderTemp);         //时间段输入错误的话，就要用临时的order去更新，使startTime和endTime复原
                         return CommonResult.failed("该时间段已被预约");
                     }
                 } else {
+                    orderService.update(orderTemp);         //时间段输入错误的话，就要用临时的order去更新，使startTime和endTime复原
                     return CommonResult.failed(orderService.judgeTime(order));
                 }
             }else{
