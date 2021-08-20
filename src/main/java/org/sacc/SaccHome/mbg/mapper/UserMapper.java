@@ -76,4 +76,13 @@ public interface UserMapper {
     @Insert("INSERT INTO user ( username,password,created_at)"
             + "VALUES(#{username}, #{password}, #{createdAt})")
     int teamInsertUser(User user);
+
+    /**
+     * 密码覆盖
+     *
+     * @param
+     * @return
+     */
+    @Update("UPDATE user SET password = #{password} WHERE username = #{username}")
+    int updatePassword(@Param("username") String username);
 }
