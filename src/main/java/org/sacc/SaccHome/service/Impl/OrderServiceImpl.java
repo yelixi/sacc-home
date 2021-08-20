@@ -113,4 +113,9 @@ public class OrderServiceImpl implements OrderService {
         }
         return id;
     }
+
+    @Override
+    public Order getOrderById(int id) {
+        return ordermapper.getOrderById(id);
+    }
 }

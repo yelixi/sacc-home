@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
         if(!md5Pwd.equals(md5.getPassword())){
             return CommonResult.wrongPassword(405,"密码错误");
         } else {
-            String token = jwtToken.generateToken(user);
+            String token = jwtToken.generateToken(md5);
             Map<String,String> m = new HashMap<>();
             m.put("token",token);
             return CommonResult.success(m,"登录成功");

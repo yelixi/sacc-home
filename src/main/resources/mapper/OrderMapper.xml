@@ -306,6 +306,12 @@
             (end_time &gt;= #{startTime} AND end_time &lt;= #{endTime})
     </select>
 
+
+    <!--根据id查询-->
+    <select id="getOrderById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT * FROM `order` WHERE id=#{id};
+    </select>
+
     <!--根据id删除-->
     <delete id="deleteById" parameterType="java.lang.Integer">
       DELETE FROM `order` WHERE id=#{id};
