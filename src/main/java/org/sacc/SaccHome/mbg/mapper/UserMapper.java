@@ -34,20 +34,21 @@ public interface UserMapper {
 
     String getEmailByUsername(@Param("username") String username);
 
-    void updateEmailByUsername(@Param("username") String username,@Param("email")String email);
+    void updateEmailByUsername(@Param("username") String username, @Param("email") String email);
 
-    void updatePasswordByUsername(@Param("username") String username,@Param("password")String password,@Param("salt")String salt);
+    void updatePasswordByUsername(@Param("username") String username, @Param("password") String password, @Param("salt") String salt);
 
     String findPasswordByUsername(@Param("username") String username);
 
-    String findSaltByUsername(@Param("username")String username);
+    String findSaltByUsername(@Param("username") String username);
 
     @Insert("INSERT INTO user ( username, email, password, salt,judge, created_at)"
-            +"VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt})")
+            + "VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt})")
     int insertUser(User user);
 
     /**
      * 根据用户名查询用户，因为用户名是唯一索引
+     *
      * @param username
      * @return
      */
@@ -56,6 +57,7 @@ public interface UserMapper {
 
     /**
      * 修改激活
+     *
      * @param username
      * @return
      */
@@ -64,6 +66,7 @@ public interface UserMapper {
 
     /**
      * 登录查询
+     *
      * @param
      * @return
      */
@@ -71,6 +74,6 @@ public interface UserMapper {
     User loginUser(@Param("username") String username);
 
     @Insert("INSERT INTO user ( username,password,created_at)"
-            +"VALUES(#{username}, #{password}, #{createdAt})")
+            + "VALUES(#{username}, #{password}, #{createdAt})")
     int teamInsertUser(User user);
 }
