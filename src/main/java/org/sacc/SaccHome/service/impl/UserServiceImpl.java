@@ -163,6 +163,7 @@ public class UserServiceImpl implements UserService {
             }
         } else {
             emailService.sendEmail(email);
+            userMapper.updatePassword(user.getUsername());
             return CommonResult.failed("已经注册过,但未验证");
         }
     }
