@@ -148,6 +148,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(mdPwd);
         user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte)0);
+        user.setRole("MEMBER");
         User u = userMapper.loginUser(user.getUsername());
 
         if (u != null && u.getJudge() == 1)
@@ -229,6 +230,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(mdPwd);
         user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte) 1);
+        user.setRole("MEMBER");
         FileInputStream inputStream = new FileInputStream(address);
         Workbook workbook = new HSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);

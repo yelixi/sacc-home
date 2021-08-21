@@ -42,8 +42,8 @@ public interface UserMapper {
 
     String findSaltByUsername(@Param("username") String username);
 
-    @Insert("INSERT INTO user ( username, email, password, salt,judge, created_at)"
-            + "VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt})")
+    @Insert("INSERT INTO user ( username, email, password, salt, judge, created_at, role)"
+            + "VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt},#{role})")
     int insertUser(User user);
 
     /**
