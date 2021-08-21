@@ -73,10 +73,6 @@ public interface UserMapper {
     @Select("SELECT username, password, salt,role FROM user WHERE username = #{username} AND judge = 1")
     User loginUser(@Param("username") String username);
 
-    @Insert("INSERT INTO user ( username,password,created_at)"
-            + "VALUES(#{username}, #{password}, #{createdAt})")
-    int teamInsertUser(User user);
-
     /**
      * 密码覆盖
      *
