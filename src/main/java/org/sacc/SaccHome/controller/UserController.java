@@ -39,14 +39,12 @@ public class UserController {
     private RoleUtil roleUtil;
 
     @PutMapping("/sendEmail")
-    public CommonResult sendEmail(@RequestHeader String token) {
-        String username = (String) jwtToken.getClaimByToken(token).get("username");
+    public CommonResult sendEmail(String username) {
         return userService.sendVerificationCodeEmail(username);
     }
 
     @PostMapping("/judgeCode")
-    public CommonResult judgeCode(@RequestHeader String token, String code) {
-        String username = (String) jwtToken.getClaimByToken(token).get("username");
+    public CommonResult judgeCode(String username, String code) {
         return userService.judgeVerificationCode(username, code);
     }
 
@@ -57,8 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/forgetPassword")
-    public CommonResult forgetPassword(@RequestHeader String token, String password) {
-        String username = (String) jwtToken.getClaimByToken(token).get("username");
+    public CommonResult forgetPassword(String username, String password) {
         return userService.forgetPassword(username, password);
     }
 
