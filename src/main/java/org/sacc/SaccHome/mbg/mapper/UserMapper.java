@@ -84,5 +84,13 @@ public interface UserMapper {
      * @return
      */
     @Update("UPDATE user SET password = #{password} WHERE username = #{username}")
-    int updatePassword(@Param("username") String username);
+    void updatePassword(@Param("username") String username , @Param("password") String password);
+
+    /**
+     * 单纯查找
+     * @param
+     * @return
+     */
+    @Select("SELECT username,password,email,role, judge FROM user WHERE username = #{username}")
+    List<User> selectUser(@Param("username") String username);
 }
