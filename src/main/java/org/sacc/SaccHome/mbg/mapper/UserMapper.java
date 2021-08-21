@@ -42,8 +42,8 @@ public interface UserMapper {
 
     String findSaltByUsername(@Param("username") String username);
 
-    @Insert("INSERT INTO user ( username, email, password, salt,judge, created_at)"
-            + "VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt})")
+    @Insert("INSERT INTO user ( username, email, password, salt, judge, created_at, role)"
+            + "VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt},#{role})")
     int insertUser(User user);
 
     /**
@@ -84,5 +84,13 @@ public interface UserMapper {
      * @return
      */
     @Update("UPDATE user SET password = #{password} WHERE username = #{username}")
-    int updatePassword(@Param("username") String username);
+    void updatePassword(@Param("username") String username , @Param("password") String password);
+
+    /**
+     * 单纯查找
+     * @param
+     * @return
+     */
+    @Select("SELECT username,password,email,role, judge FROM user WHERE username = #{username}")
+    List<User> selectUser(@Param("username") String username);
 }

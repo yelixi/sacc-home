@@ -156,7 +156,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(mdPwd);
         user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte)0);
+        user.setRole("MEMBER");
         User u = userMapper.loginUser(user.getUsername());
+
         if (u != null && u.getJudge() == 1)
             return CommonResult.failed("该账号已经完成注册并验证了");
 
@@ -171,7 +173,7 @@ public class UserServiceImpl implements UserService {
             }
         } else {
             emailService.sendEmail(email);
-            userMapper.updatePassword(user.getUsername());
+            userMapper.updatePassword(user.getUsername(),user.getPassword());
             return CommonResult.verificationFailed(406,"注册未验证");
         }
     }
@@ -236,6 +238,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(mdPwd);
         user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte) 1);
+        user.setRole("MEMBER");
         FileInputStream inputStream = new FileInputStream(address);
         Workbook workbook = new HSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
@@ -262,14 +265,18 @@ public class UserServiceImpl implements UserService {
             Cell cell = row.getCell(columnNum);
             String temp = cell.getStringCellValue();
             if (!temp.equals(null)) {
-                user.setUsername(temp);
-                user.setEmail(temp.toLowerCase()+"@njupt.edu.cn");
-                int result = userMapper.insertUser(user);
-                if (result <= 0){
-                    inputStream.close();
-                    return CommonResult.failed("操作失败");
+                //判断添加列表里面是否有重复
+                List<User> userList = userMapper.selectUser(temp);
+                if (userList.isEmpty()) {
+                    user.setUsername(temp);
+                    user.setEmail(temp.toLowerCase() + "@njupt.edu.cn");
+                    int result = userMapper.insertUser(user);
+                    if (result <= 0) {
+                        inputStream.close();
+                        return CommonResult.failed("操作失败");
+                    }
                 }
-            } else {
+            }else {
                 break;
             }
         }
