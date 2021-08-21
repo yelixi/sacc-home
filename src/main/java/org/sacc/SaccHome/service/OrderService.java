@@ -10,7 +10,7 @@ import java.text.ParseException;
 @Service
 public interface OrderService {
 
-    Page<Order> findNextWeek(int currentPage);
+    Page<Order> find(int currentPage);
 
     Order save(Order order);
 
