@@ -83,8 +83,6 @@ public class FileTaskServiceImpl implements FileTaskService {
 
     @Override
     public int createFileTask(FileTask fileTask){
-        fileTask.setCreatedAt(LocalDateTime.now());
-        fileTask.setUpdatedAt(LocalDateTime.now());
         int i = fileTaskMapper.insertSelective(fileTask);
         return i;
     }
