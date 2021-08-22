@@ -140,6 +140,8 @@ public class FileTaskController {
         //获取提交的用户数
         int numsCommitted =userParams.size();
         statusResult.setNumsCommitted(numsCommitted);
+        Integer userId = fileTask.getId();
+        statusResult.setId(userId);
         return CommonResult.success(statusResult,"获取文件任务状态成功");
     }
 

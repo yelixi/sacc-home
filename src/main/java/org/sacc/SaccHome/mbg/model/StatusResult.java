@@ -1,6 +1,7 @@
 package org.sacc.SaccHome.mbg.model;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,5 +19,6 @@ public class StatusResult {
 
     @ApiModelProperty(value = "已提交的用户列表")
     private List<UserParam>  committedUsers;
-
+    @ApiModelProperty(value = "发起任务的用户id")
+    private Integer id;
 }
