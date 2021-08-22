@@ -5,12 +5,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import org.sacc.SaccHome.api.CommonResult;
+import org.sacc.SaccHome.enums.RoleEnum;
 import org.sacc.SaccHome.mbg.model.FileTask;
 import org.sacc.SaccHome.mbg.model.StatusResult;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.mbg.model.UserParam;
 import org.sacc.SaccHome.service.FileTaskService;
+import org.sacc.SaccHome.service.OrderService;
 import org.sacc.SaccHome.service.UserService;
+import org.sacc.SaccHome.util.RoleUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,121 +35,101 @@ import java.util.List;
 @Api(tags = "fileController" ,description = "weiwo-任务3-文件任务")
 @RequestMapping("/file")
 public class FileTaskController {
-    private static final Logger logger= LoggerFactory.getLogger(FileTaskController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileTaskController.class);
     @Autowired
     private FileTaskService fileTaskService;
     @Autowired
-    private UserService userService;
+    private RoleUtil roleUtil;
 
 
 
     @ApiOperation(value = "获取文件任务")
-    @RequestMapping(value = "/getFileTask",method = RequestMethod.GET)
+    @RequestMapping(value = "/getFileTask", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<FileTask> getFileTask(@RequestParam("id") Integer id){
+    public CommonResult<FileTask> getFileTask(@RequestParam("id") Integer id) {
         FileTask fileTask = fileTaskService.getFileTask(id);
-        if(fileTask==null) {
-            logger.debug("获取文件任务失败,文件id为:{}",id);
+        if (fileTask == null) {
+            logger.debug("获取文件任务失败,文件id为:{}", id);
             return CommonResult.failed("获取文件任务失败");
-        }else{
+        } else {
             logger.info("文件获取成功");
-            return CommonResult.success(fileTask,"获取文件任务成功");
+            return CommonResult.success(fileTask, "获取文件任务成功");
         }
 
     }
 
-    @ApiOperation(value ="创建文件任务")
-    @RequestMapping(value = "/createFileTask",method = RequestMethod.POST)
+    @ApiOperation(value = "创建文件任务")
+    @RequestMapping(value = "/createFileTask", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult createFileTask(@RequestBody FileTask fileTask){
+    public CommonResult createFileTask(@RequestBody FileTask fileTask) {
         int var = fileTaskService.createFileTask(fileTask);
 
 
-        if(var==1){
+        if (var == 1) {
             logger.info("文件创建成功");
             return CommonResult.success(fileTask);
-        }else{
+        } else {
             logger.info("文件创建失败");
             return CommonResult.failed("文件创建失败");
         }
 
 
-
     }
+
     @ApiOperation(value = "删除文件任务")
-    @RequestMapping(value = "/deleteFileTask",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deleteFileTask", method = RequestMethod.DELETE)
     @ResponseBody
-    public CommonResult    deleteFileTask(@RequestParam("id") Integer id){
+    public CommonResult deleteFileTask(@RequestParam("id") Integer id) {
         FileTask fileTask = fileTaskService.getFileTask(id);
-        if(fileTask==null){
+        if (fileTask == null) {
             return CommonResult.failed("文件不存在");
         }
 
         int i = fileTaskService.deleteFileTask(id);
-        if(i==1){
+        if (i == 1) {
             logger.info("文件删除成功");
-            return CommonResult.success(null,"文件删除成功");
+            return CommonResult.success(null, "文件删除成功");
 
-        }else{
-            logger.debug("文件删除失败,文件id是:{}",id);
-            return CommonResult.failed("文件删除失败,文件id是:{}"+id);
+        } else {
+            logger.debug("文件删除失败,文件id是:{}", id);
+            return CommonResult.failed("文件删除失败,文件id是:{}" + id);
         }
     }
 
     @ApiOperation(value = "更新文件任务")
-    @RequestMapping(value = "/updateFileTask",method = RequestMethod.PUT)
+    @RequestMapping(value = "/updateFileTask", method = RequestMethod.PUT)
     @ResponseBody
-    public CommonResult updateFileTask(@RequestParam("id") Integer id,@RequestBody
-            FileTask fileTask){
+    public CommonResult updateFileTask(@RequestParam("id") Integer id, @RequestBody
+            FileTask fileTask) {
         int i = fileTaskService.updateFileTask(id, fileTask);
-        if(i==1){
+        if (i == 1) {
             logger.info("文件更新成功");
             return CommonResult.success(fileTask);
-        }else{
-            logger.debug("更新文件任务失败,文件id为:{}",id);
+        } else {
+            logger.debug("更新文件任务失败,文件id为:{}", id);
             return CommonResult.failed("文件更新失败");
         }
     }
 
     @ApiOperation(value = "获取文件任务状态")
-    @RequestMapping(value = "/getFileTaskStatus",method = RequestMethod.GET)
+    @RequestMapping(value = "/getFileTaskStatus", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<StatusResult> getFileTaskStatus(@RequestParam("id") Integer id){
+    public CommonResult<StatusResult> getFileTaskStatus(@RequestParam("id") Integer id,@RequestParam int userId, @RequestHeader String token) {
         //获取剩余时间
-        StatusResult statusResult=new StatusResult();
-        FileTask fileTask = fileTaskService.getFileTask(id);
-        Integer userId=fileTask.getUserId();
-        LocalDateTime now=LocalDateTime.now();
-        LocalDateTime deadline=fileTask.getDeadline();
-        Duration duration=Duration.between(now,deadline);
-        String hours = String.valueOf(duration.toHoursPart());
-        String days= String.valueOf(duration.toDaysPart());
+        if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT)) {
+            StatusResult statusResult = fileTaskService.getFileTaskStatus(id);
+            return CommonResult.success(statusResult, "获取文件任务状态成功");
 
-        String seronds = String.valueOf(duration.toSecondsPart());
-        String minutes = String.valueOf(duration.toMinutesPart());
-        String exp=days+"天,"+hours+"小时,"+minutes+"分钟,"+seronds+"秒";
-        System.out.println(exp);
-        statusResult.setExp_left(exp);
-        //获取提交的用户列表
-        List<User> users = userService.getUsersByFileTask(id);
-        List<UserParam> userParams=new ArrayList<>();
-
-        for(User user:users){
-            UserParam userParam=new UserParam();
-            userParam.setId(user.getId());
-            userParam.setUseName(user.getUsername());
-            userParams.add(userParam);
+        }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
+            int userIdByToken=fileTaskService.getUserIdByToken(token);
+            if(userId==userIdByToken){
+               StatusResult statusResult=fileTaskService.getFileTaskStatus(id);
+                return CommonResult.success(statusResult,"获取文件任务状态成功");
+            }else{
+                return CommonResult.failed("此文件任务非您创建,不可获取");
+            }
+        }else{
+            return CommonResult.unauthorized(null);
         }
-        statusResult.setCommittedUsers(userParams);
-        //获取提交的用户数
-        int numsCommitted =userParams.size();
-        statusResult.setNumsCommitted(numsCommitted);
-        statusResult.setId(userId);
-        return CommonResult.success(statusResult,"获取文件任务状态成功");
     }
-
-
-
-
-
 }
