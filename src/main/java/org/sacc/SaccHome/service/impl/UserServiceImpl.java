@@ -11,6 +11,7 @@ import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.ResultCode;
 import org.sacc.SaccHome.enums.RoleEnum;
 import org.sacc.SaccHome.exception.BusinessException;
+import org.sacc.SaccHome.mbg.mapper.UserDao;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.User;
 import org.sacc.SaccHome.service.EmailService;
@@ -49,6 +50,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtToken jwtToken;
 
+    @Autowired
+    private UserDao userDao;
+
 
     @Override
     public User getUser(Integer id) {
@@ -59,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsersByFileTask(Integer id) {
-        return null;
+        return userDao.getUsersByFileTask(id);
     }
 
     @Override
@@ -144,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserInfo(String username) {
-        User user = userMapper.selectUserByUserName(username).get(0);
+        User user = userMapper.selectUser(username).get(0);
         user.setPassword("******");
         user.setSalt("******");
         return user;
