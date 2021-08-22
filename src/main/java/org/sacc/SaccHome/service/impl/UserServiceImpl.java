@@ -50,9 +50,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtToken jwtToken;
 
-    @Autowired
-    private UserDao userDao;
-
 
     @Override
     public User getUser(Integer id) {
@@ -63,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsersByFileTask(Integer id) {
-        return userDao.getUsersByFileTask(id);
+        return null;
     }
 
     @Override
