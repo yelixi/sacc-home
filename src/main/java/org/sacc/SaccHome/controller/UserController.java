@@ -56,7 +56,7 @@ public class UserController {
     @PutMapping("/updateEmail")
     public CommonResult updateEmail(@RequestHeader String token, String email) {
         String username = (String) jwtToken.getClaimByToken(token).get("username");
-        return userService.updateEmailByUsername(email, username);
+        return userService.updateEmailByUsername(username, email);
     }
 
     @PostMapping("/forgetPassword")
