@@ -18,5 +18,7 @@ public class StatusResult {
 
     @ApiModelProperty(value = "已提交的用户列表")
     private List<UserParam>  committedUsers;
+    @ApiModelProperty(value = "创建该文件任务的用户id")
+    private Integer id;
 
 }
