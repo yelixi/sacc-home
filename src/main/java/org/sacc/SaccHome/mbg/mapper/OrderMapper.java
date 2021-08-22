@@ -33,10 +33,10 @@ public interface OrderMapper {
     int updateByPrimaryKey(Order record);
 
     /**
-     * 显示七天内的预约
+     * 显示今日及以后的预约
      * @return
      */
-    List<Order> findNextWeek(PageParam pageParam);
+    List<Order> find(PageParam pageParam);
 
     int getCount();
 
@@ -49,7 +49,7 @@ public interface OrderMapper {
 
 
     /**
-     * 判断时间段a-b是否与已有的预约时间重复
+     * 判断时间段是否与已有的预约时间重复
      * @param order
      * @return
      */
@@ -60,4 +60,6 @@ public interface OrderMapper {
     int update(Order order);
 
     void deleteTimeById(int id);
+
+    Order getOrderById(int id);
 }

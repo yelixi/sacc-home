@@ -34,11 +34,11 @@ public class OrderServiceImpl implements OrderService {
     JwtToken jwtToken;
 
     @Override
-    public Page<Order> findNextWeek(int currentPage) {
+    public Page<Order> find(int currentPage) {
         PageParam pageParam = new PageParam();
         Page<Order> page = new Page<Order>();
         pageParam.setCurrentPage(currentPage);
-        page.setList(ordermapper.findNextWeek(pageParam));
+        page.setList(ordermapper.find(pageParam));
         page.setCurrentPage(currentPage);
         page.setTotalNumber(ordermapper.getCount());
         if(ordermapper.getCount() % pageParam.getPageSize()==0){
@@ -76,11 +76,13 @@ public class OrderServiceImpl implements OrderService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date1 = sf.parse(statrTime);
         Date date2 = sf.parse(endTime);
+        Date date3 = new Date();
+        date3.setTime(date3.getTime()-5*60*1000);
         if(date1.before(date2)){         //判断起始时间是否早于结束时间
-            if(date1.after(new Date())){       //判断起始时间是否比当前时间晚
+            if(date1.after(date3)){       //判断起始时间是否比date3晚，date3比当前时间早5分钟
                 return "时间格式正确";
             }else{
-                return "请输入今日之后的时间段";
+                return "请输入当前时间之后的时间段";
             }
         }else{
             return "起始时间需早于结束时间";
@@ -112,5 +114,10 @@ public class OrderServiceImpl implements OrderService {
             id=user.getId();
         }
         return id;
+    }
+
+    @Override
+    public Order getOrderById(int id) {
+        return ordermapper.getOrderById(id);
     }
 }

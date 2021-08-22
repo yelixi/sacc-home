@@ -165,7 +165,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(mdPwd);
         user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte)0);
+        user.setRole("MEMBER");
         User u = userMapper.loginUser(user.getUsername());
+
         if (u != null && u.getJudge() == 1)
             return CommonResult.failed("该账号已经完成注册并验证了");
 
@@ -176,11 +178,12 @@ public class UserServiceImpl implements UserService {
                 emailService.sendEmail(email);
                 return CommonResult.success(null, "操作成功，请输入验证码验证码");
             } else {
-                return CommonResult.failed("操作失败");
+                return CommonResult.validateFailed();
             }
         } else {
             emailService.sendEmail(email);
-            return CommonResult.failed("已经注册过,但未验证");
+            userMapper.updatePassword(user.getUsername(),user.getPassword());
+            return CommonResult.verificationFailed(406,"注册未验证");
         }
     }
 
@@ -204,7 +207,7 @@ public class UserServiceImpl implements UserService {
         if(!md5Pwd.equals(md5.getPassword())){
             return CommonResult.wrongPassword(405,"密码错误");
         } else {
-            String token = jwtToken.generateToken(user);
+            String token = jwtToken.generateToken(md5);
             Map<String,String> m = new HashMap<>();
             m.put("token",token);
             return CommonResult.success(m,"登录成功");
@@ -244,6 +247,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(mdPwd);
         user.setCreatedAt(LocalDateTime.now());
         user.setJudge((byte) 1);
+        user.setRole("MEMBER");
         FileInputStream inputStream = new FileInputStream(address);
         Workbook workbook = new HSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
@@ -270,14 +274,18 @@ public class UserServiceImpl implements UserService {
             Cell cell = row.getCell(columnNum);
             String temp = cell.getStringCellValue();
             if (!temp.equals(null)) {
-                user.setUsername(temp);
-                user.setEmail(temp.toLowerCase()+"@njupt.edu.cn");
-                int result = userMapper.insertUser(user);
-                if (result <= 0){
-                    inputStream.close();
-                    return CommonResult.failed("操作失败");
+                //判断添加列表里面是否有重复
+                List<User> userList = userMapper.selectUser(temp);
+                if (userList.isEmpty()) {
+                    user.setUsername(temp);
+                    user.setEmail(temp.toLowerCase() + "@njupt.edu.cn");
+                    int result = userMapper.insertUser(user);
+                    if (result <= 0) {
+                        inputStream.close();
+                        return CommonResult.failed("操作失败");
+                    }
                 }
-            } else {
+            }else {
                 break;
             }
         }

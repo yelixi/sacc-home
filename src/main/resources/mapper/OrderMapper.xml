@@ -271,31 +271,31 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-    <!--查询七天内的预约-->
-    <select id="findNextWeek" parameterType="org.sacc.SaccHome.mbg.model.PageParam" resultMap="BaseResultMap">
+    <!--查询今日及以后的预约-->
+    <select id="find" parameterType="org.sacc.SaccHome.mbg.model.PageParam" resultMap="BaseResultMap">
       SELECT
       *
       FROM
       `order`
       WHERE
-        To_Days(start_time) - To_Days(current_timestamp()) &lt;= 7 AND To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0
+        To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0
       ORDER BY
-      id
+        start_time
       LIMIT #{beginLine} , #{pageSize}
     </select>
 
-    <!--七天内的预约总数-->
+    <!--今日及以后的预约总数-->
     <select id="getCount" resultType="java.lang.Integer">
       SELECT
       count(1)
       FROM `order`
-      WHERE To_Days(start_time) - To_Days(current_timestamp()) &lt;= 7 AND To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0
+      WHERE To_Days(start_time) - To_Days(current_timestamp()) &gt;= 0
     </select>
 
     <!--新增预约-->
     <insert id="save" parameterType="org.sacc.SaccHome.mbg.model.Order" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO `order` (start_time,end_time,class_name,presenter,introduction,created_at,updated_at)
-        VALUES (#{startTime},#{endTime},#{className},#{presenter},#{introduction},current_timestamp(),current_timestamp());
+        INSERT INTO `order` (start_time,end_time,class_name,presenter,introduction,user_id,created_at,updated_at)
+        VALUES (#{startTime},#{endTime},#{className},#{presenter},#{introduction},#{userId},current_timestamp(),current_timestamp());
     </insert>
 
     <!--查询是否存在重复的时间段-->
@@ -304,6 +304,12 @@
             (start_time &gt;= #{startTime} AND start_time &lt; #{endTime}) OR
             (start_time &lt;= #{startTime} AND end_time &gt;= #{endTime}) OR
             (end_time &gt;= #{startTime} AND end_time &lt;= #{endTime})
+    </select>
+
+
+    <!--根据id查询-->
+    <select id="getOrderById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT * FROM `order` WHERE id=#{id};
     </select>
 
     <!--根据id删除-->
@@ -318,6 +324,7 @@
           class_name = #{className,jdbcType=VARCHAR},
           presenter = #{presenter,jdbcType=VARCHAR},
           introduction = #{introduction,jdbcType=VARCHAR},
+          user_id=#{userId,jdbcType=INTEGER},
           updated_at = current_timestamp()
       where id = #{id,jdbcType=INTEGER}
     </update>
