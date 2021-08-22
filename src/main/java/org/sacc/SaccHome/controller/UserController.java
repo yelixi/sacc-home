@@ -38,9 +38,14 @@ public class UserController {
     @Resource
     private RoleUtil roleUtil;
 
-    @PutMapping("/sendEmail")
-    public CommonResult sendEmail(String username) {
-        return userService.sendVerificationCodeEmail(username);
+    @GetMapping("/sendEmail/username")
+    public CommonResult sendEmailByUsername(String username) {
+        return userService.sendVerificationCodeEmailByUsername(username);
+    }
+
+    @GetMapping("/sendEmail/email")
+    public CommonResult sendEmailByEmail(String email){
+        return userService.sendVerificationCodeEmailByEmail(email);
     }
 
     @PostMapping("/judgeCode")
