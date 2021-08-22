@@ -23,7 +23,9 @@ public interface UserService {
 
     CommonResult judgeVerificationCode(String username, String inputVerificationCode);
 
-    CommonResult sendVerificationCodeEmail(String username);
+    CommonResult sendVerificationCodeEmailByUsername(String username);
+
+    CommonResult sendVerificationCodeEmailByEmail(String email);
 
     User getUserInfo(String username);
 
