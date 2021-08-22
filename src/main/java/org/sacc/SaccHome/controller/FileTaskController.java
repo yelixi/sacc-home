@@ -114,7 +114,7 @@ public class FileTaskController {
     @ApiOperation(value = "获取文件任务状态")
     @RequestMapping(value = "/getFileTaskStatus", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<StatusResult> getFileTaskStatus(@RequestParam("id") Integer id,@RequestParam int userId, @RequestHeader String token) {
+    public CommonResult<StatusResult> getFileTaskStatus(@RequestParam("id") Integer id,@RequestParam("userId") int userId, @RequestHeader String token) {
         //获取剩余时间
         if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT)) {
             StatusResult statusResult = fileTaskService.getFileTaskStatus(id);
