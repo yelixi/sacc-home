@@ -67,7 +67,7 @@ public interface UserMapper {
      * @param
      * @return
      */
-    @Select("SELECT username, password, salt,role FROM user WHERE username = #{username} AND judge = 1")
+    @Select("SELECT id, username, password, salt,role FROM user WHERE username = #{username} AND judge = 1")
     User loginUser(@Param("username") String username);
 
     @Insert("INSERT INTO user ( username,password,created_at)"
