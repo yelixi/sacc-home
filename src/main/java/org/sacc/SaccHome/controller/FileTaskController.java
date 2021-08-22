@@ -115,6 +115,7 @@ public class FileTaskController {
         //获取剩余时间
         StatusResult statusResult=new StatusResult();
         FileTask fileTask = fileTaskService.getFileTask(id);
+        Integer userId=fileTask.getUserId();
         LocalDateTime now=LocalDateTime.now();
         LocalDateTime deadline=fileTask.getDeadline();
         Duration duration=Duration.between(now,deadline);
@@ -140,6 +141,7 @@ public class FileTaskController {
         //获取提交的用户数
         int numsCommitted =userParams.size();
         statusResult.setNumsCommitted(numsCommitted);
+        statusResult.setId(userId);
         return CommonResult.success(statusResult,"获取文件任务状态成功");
     }
 

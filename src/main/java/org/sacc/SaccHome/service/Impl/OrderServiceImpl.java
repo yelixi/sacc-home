@@ -108,12 +108,8 @@ public class OrderServiceImpl implements OrderService {
     public int getUserIdByToken(String token) {
         Claims claim=jwtToken.getClaimByToken(token);
         String username= (String) claim.get("username");
-        List<User> users=userMapper.selectUserByUserName(username);
-        int id = 0;
-        for(User user:users){
-            id=user.getId();
-        }
-        return id;
+        User user=userMapper.loginUser(username);
+        return user.getId();
     }
 
     @Override

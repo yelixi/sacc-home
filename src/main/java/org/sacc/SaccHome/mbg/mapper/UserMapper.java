@@ -42,8 +42,14 @@ public interface UserMapper {
 
     String findSaltByUsername(@Param("username") String username);
 
+
+    @Select("select username from user where email=#{email}")
+    String selectUsernameByEmail(@Param("email") String email);
+
+    
     @Insert("INSERT INTO user ( username, email, password, salt, judge, created_at, role)"
             + "VALUES(#{username}, #{email}, #{password},#{salt},#{judge},#{createdAt},#{role})")
+
     int insertUser(User user);
 
     /**
@@ -70,7 +76,7 @@ public interface UserMapper {
      * @param
      * @return
      */
-    @Select("SELECT username, password, salt,role FROM user WHERE username = #{username} AND judge = 1")
+    @Select("SELECT id, username, password, salt,role FROM user WHERE username = #{username} AND judge = 1")
     User loginUser(@Param("username") String username);
 
     /**

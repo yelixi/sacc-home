@@ -50,7 +50,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtToken jwtToken;
 
-
+    @Autowired
+    private UserDao userDao;
     @Override
     public User getUser(Integer id) {
         User user = userMapper.selectByPrimaryKey(id);
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsersByFileTask(Integer id) {
-        return null;
+        return userDao.getUsersByFileTask(id);
     }
 
     @Override
@@ -135,10 +136,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonResult sendVerificationCodeEmail(String username) {
+    public CommonResult sendVerificationCodeEmailByUsername(String username) {
         String email = this.getEmailByUsername(username);
         String verificationCode = VerificationCodeGenerator.getVerificationCode(6);
-        redisTemplate.opsForValue().setIfAbsent(username, verificationCode, 1, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(username, verificationCode, 1, TimeUnit.HOURS);
+        emailService.sendSimpleMail(email, verificationCode);
+        return CommonResult.success(null);
+    }
+
+    @Override
+    public CommonResult sendVerificationCodeEmailByEmail(String email) {
+        String username = userMapper.selectUsernameByEmail(email);
+        String verificationCode = VerificationCodeGenerator.getVerificationCode(6);
+        redisTemplate.opsForValue().set(username, verificationCode, 1, TimeUnit.HOURS);
         emailService.sendSimpleMail(email, verificationCode);
         return CommonResult.success(null);
     }
