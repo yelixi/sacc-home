@@ -1,5 +1,6 @@
 package org.sacc.SaccHome.controller;
 
+import io.jsonwebtoken.Claims;
 import io.minio.MinioClient;
 import io.minio.Result;
 import io.minio.errors.*;
@@ -9,10 +10,10 @@ import org.sacc.SaccHome.mbg.mapper.FileMapper;
 import org.sacc.SaccHome.mbg.model.File;
 import org.sacc.SaccHome.mbg.model.FileTask;
 import org.sacc.SaccHome.service.FileTaskService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.sacc.SaccHome.service.UserInfoService;
+import org.sacc.SaccHome.util.JwtToken;
+import org.sacc.SaccHome.vo.UserInfoVo;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -40,9 +41,14 @@ public class FileController {
     @Resource
     private FileMapper fileMapper;
 
+    @Resource
+    private JwtToken jwtToken;
+
+    @Resource
+    private UserInfoService userInfoService;
 
     @PostMapping("/uploadShareFile")
-    public CommonResult<String> Upload(MultipartFile file) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public CommonResult<String> Upload(MultipartFile file,@RequestHeader String token) throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         String bucketname = "share";
         try {
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
@@ -140,8 +146,12 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public CommonResult<Object> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public CommonResult<Object> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId,@RequestHeader String token)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         FileTask fileTask = fileTaskService.getFileTask(fileTaskId);
+        Claims claimByToken = jwtToken.getClaimByToken(token);
+        String username = (String)claimByToken.get("username");
+        UserInfoVo aThis = userInfoService.getThis(username);
+        int i = aThis.getId();
         String fileName = file.getOriginalFilename();
         assert fileName != null;
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -161,6 +171,7 @@ public class FileController {
             System.out.println("ok");
             String url = "http://116.62.110.191:8888" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(newFileName.toString());
             File f = new File();
+            f.setUserId(i);
             f.setPath(url);
             f.setFileName(newFileName);
             f.setFileTaskId(fileTaskId);
