@@ -2,6 +2,7 @@ package org.sacc.SaccHome.service;
 
 
 import org.sacc.SaccHome.mbg.model.FileTask;
+import org.sacc.SaccHome.mbg.model.StatusResult;
 
 import java.io.IOException;
 import java.rmi.ServerException;
@@ -23,7 +24,10 @@ public interface FileTaskService {
 //获取文件任务
     FileTask getFileTask(Integer id) ;
 
-
+//获取文件任务状态
+    StatusResult getFileTaskStatus(Integer id);
+//通过token获取用户id
+    int getUserIdByToken(String token);
 
 
 
