@@ -32,13 +32,22 @@ public class OrderController {
     @GetMapping ("/getOrder")
     @ResponseBody
     public CommonResult<Page<Order>> find(@RequestParam int currentPage,@RequestHeader String token){
-        if(roleUtil.hasAnyRole(token, RoleEnum.MEMBER,RoleEnum.ADMIN,RoleEnum.ROOT)) {
+        if(roleUtil.hasAnyRole(token,RoleEnum.ADMIN,RoleEnum.ROOT)) {
             Page<Order> page = orderService.find(--currentPage);    //前端传的page是从1开始，而后端是从0开始，所以这里page减1
             page.setCurrentPage(++currentPage);     //回给前端又+1
             if (page.getTotalNumber()==0) {
                 return CommonResult.success(null, "今日及以后无预约");
             } else {
-                return CommonResult.success(page);
+                return CommonResult.success(page,"1");      //返回userId给前端，用于判断展示的每条数据该用户是否能够删除和更新，管理员默认返回1，其他的就返回userId
+            }
+        }else if(roleUtil.hasAnyRole(token, RoleEnum.MEMBER)){
+            Page<Order> page = orderService.find(--currentPage);    //前端传的page是从1开始，而后端是从0开始，所以这里page减1
+            page.setCurrentPage(++currentPage);     //回给前端又+1
+            if (page.getTotalNumber()==0) {
+                return CommonResult.success(null, "今日及以后无预约");
+            } else {
+                int userIdByToken = orderService.getUserIdByToken(token);
+                return CommonResult.success(page,userIdByToken+"");      //返回userId给前端，用于判断展示的每条数据该用户是否能够删除和更新，管理员默认返回1，其他的就返回userId
             }
         }else {
             return CommonResult.unauthorized(null);
