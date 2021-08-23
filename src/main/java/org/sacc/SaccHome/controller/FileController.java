@@ -79,14 +79,14 @@ public class FileController {
         }
 
         else {
-            Map<String, String> map = new HashMap<>();
-            url.add(map);
             Iterable<Result<Item>> results =
                     minioClient.listObjects(bucketname);
             for (Result<Item> result : results) {
+                Map<String, String> map = new HashMap<>();
                 Item item = result.get();
                 map.put("filename",item.objectName());
                 map.put("url","http://116.62.110.191:8888" + "/download/" + "?"+"bucketname=share"+"&" + "filename"+ "=" +URLEncoder.encode(item.objectName(), StandardCharsets.UTF_8));
+                url.add(map);
             }
             System.out.println(url);
             return CommonResult.success(url);
