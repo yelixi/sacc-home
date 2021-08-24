@@ -1,5 +1,6 @@
 package org.sacc.SaccHome.controller;
 
+import cn.hutool.core.util.ZipUtil;
 import io.jsonwebtoken.Claims;
 import io.minio.MinioClient;
 import io.minio.Result;
@@ -234,9 +235,61 @@ public class FileController {
         }
 
     }
+
     @GetMapping(value = "list")
     public List<File> List(){
         return fileMapper.selectList();
+    }
+
+    @GetMapping(value = "downloadzip")
+    public CommonResult<String> DownZip(@RequestParam("bucketname") String bucketname,HttpServletResponse response) throws InvalidPortException, InvalidEndpointException {
+        try{
+            MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
+            List<String> fileUrlList = new ArrayList<String>();
+            boolean found = minioClient.bucketExists(bucketname);
+            if (found) {
+                // 列出'my-bucketname'里的对象
+                Iterable<Result<Item>> myObjects = minioClient.listObjects(bucketname);
+                for (Result<Item> result : myObjects) {
+                    Item item = result.get();
+                    fileUrlList.add(item.objectName());
+                }
+                //被压缩文件InputStream
+                InputStream[] srcFiles = new InputStream[fileUrlList.size()];
+                //被压缩文件名称
+                String[] srcFileNames = new String[fileUrlList.size()];
+                for (int i = 0; i < fileUrlList.size(); i++) {
+                    String fileUrl = fileUrlList.get(i);
+                    InputStream inputStream = minioClient.getObject(bucketname, fileUrl);
+                    if (inputStream == null) {
+                        continue;
+                    }
+                    srcFiles[i] = inputStream;
+                    String[] splitFileUrl = fileUrl.split("/");
+                    srcFileNames[i] = splitFileUrl[splitFileUrl.length - 1];
+                }
+                //多个文件压缩成压缩包返回
+                ZipUtil.zip(response.getOutputStream(), srcFileNames, srcFiles);
+                return CommonResult.success("successfully downloadzip ");
+            }
+            else {
+                System.out.println(bucketname+" does not exist");
+                return CommonResult.failed(bucketname+" does not exist " + " Failed downloadzip ");
+            }
+        }catch (MinioException | XmlPullParserException e) {
+            System.out.println("Error occurred: " + e);
+            return CommonResult.failed("Error occurred: " + e);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return CommonResult.failed("Error occurred: " + e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CommonResult.failed("Error occurred: " + e);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+            return CommonResult.failed("Error occurred: " + e);
+        }
+
     }
 
 }
