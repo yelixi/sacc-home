@@ -2,6 +2,7 @@ package org.sacc.SaccHome.service.Impl;
 
 import io.jsonwebtoken.Claims;
 import org.sacc.SaccHome.api.CommonResult;
+import org.sacc.SaccHome.mbg.mapper.FileMapper;
 import org.sacc.SaccHome.mbg.mapper.FileTaskMapper;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.*;
@@ -29,22 +30,23 @@ public class FileTaskServiceImpl implements FileTaskService {
     @Autowired
     private UserService userService;
     @Autowired
-    UserMapper userMapper;
-
+    private UserMapper userMapper;
     @Autowired
-    JwtToken jwtToken;
+    private FileMapper fileMapper;
+    @Autowired
+    private JwtToken jwtToken;
 
-        @Override
-        public int getUserIdByToken(String token) {
-            Claims claim=jwtToken.getClaimByToken(token);
-            String username= (String) claim.get("username");
-            List<User> users=userMapper.selectUserByUserName(username);
-            int id = 0;
-            for(User user:users){
-                id=user.getId();
-            }
-            return id;
+    @Override
+    public int getUserIdByToken(String token) {
+        Claims claim=jwtToken.getClaimByToken(token);
+        String username= (String) claim.get("username");
+        List<User> users=userMapper.selectUser(username);
+        int id = 0;
+        for(User user:users){
+            id=user.getId();
         }
+        return id;
+    }
 
 
     @Override
@@ -65,19 +67,19 @@ public class FileTaskServiceImpl implements FileTaskService {
         statusResult.setExp_left(exp);
         //获取提交的用户列表
         List<User> users = userService.getUsersByFileTask(id);
-        List<UserParam> userParams = new ArrayList<>();
+//        List<UserParam> userParams = new ArrayList<>();
+//        for (User user : users) {
+//            UserParam userParam = new UserParam();
+//            userParam.setId(user.getId());
+//            userParam.setUseName(user.getUsername());
+//            userParams.add(userParam);
+//        }
 
-        for (User user : users) {
-            UserParam userParam = new UserParam();
-            userParam.setId(user.getId());
-            userParam.setUseName(user.getUsername());
-            userParams.add(userParam);
-        }
-        statusResult.setCommittedUsers(userParams);
         //获取提交的用户数
-        int numsCommitted = userParams.size();
+        int numsCommitted = users.size();
         statusResult.setNumsCommitted(numsCommitted);
-        statusResult.setId(userId);
+        statusResult.setTaskName(fileTask.getName());
+        statusResult.setTaskId(fileTask.getId());
         return statusResult;
     }
 
@@ -87,11 +89,49 @@ public class FileTaskServiceImpl implements FileTaskService {
         return i;
     }
 
+
+
     @Override
     public int updateFileTask(Integer id, FileTask fileTask) {
         fileTask.setUpdatedAt(LocalDateTime.now());
         fileTask.setId(id);
         return fileTaskMapper.updateByPrimaryKeySelective(fileTask);
+    }
+
+    @Override
+    public List<FileTask> listFileTasksByIdByTimeDesc(String token) {
+        Claims claim=jwtToken.getClaimByToken(token);
+        String username= (String) claim.get("username");
+        List<User> users=userMapper.selectUser(username);
+        int id = 0;
+        for(User user:users){
+            id=user.getId();
+        }
+        //现在这个id是当前用户id
+        FileTaskExample example=new FileTaskExample();
+        example.createCriteria().andUserIdEqualTo(id);
+        example.setOrderByClause("created_at desc");
+        List<FileTask> fileTasks = fileTaskMapper.selectByExample(example);
+        return fileTasks;
+    }
+
+
+
+    @Override
+    public List<FileTask> listFileTasksByIdByTimeAsc(String token) {
+        Claims claim=jwtToken.getClaimByToken(token);
+        String username= (String) claim.get("username");
+        List<User> users=userMapper.selectUser(username);
+        int id = 0;
+        for(User user:users){
+            id=user.getId();
+        }
+        //现在这个id是当前用户id
+        FileTaskExample example=new FileTaskExample();
+        example.createCriteria().andUserIdEqualTo(id);
+        example.setOrderByClause("created_at asc");
+        List<FileTask> fileTasks = fileTaskMapper.selectByExample(example);
+        return fileTasks;
     }
 
     @Override
@@ -103,6 +143,26 @@ public class FileTaskServiceImpl implements FileTaskService {
     public FileTask getFileTask(Integer id) {
         return fileTaskMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public TaskDetails getDetails(Integer fileTaskId) {
+        FileExample example=new FileExample();
+        example.createCriteria().andFileTaskIdEqualTo(fileTaskId);
+        List<File> files = fileMapper.selectByExample(example);
+        List<User> users = userService.getUsersByFileTask(fileTaskId);
+        List<UserParam> userParams = new ArrayList<>();
+        for (User user : users) {
+            UserParam userParam = new UserParam();
+            userParam.setId(user.getId());
+            userParam.setUseName(user.getUsername());
+            userParams.add(userParam);
+        }
+        TaskDetails taskDetails=new TaskDetails();
+        taskDetails.setFiles(files);
+        taskDetails.setUserInfos(userParams);
+        return taskDetails;
+    }
+
 
 
 
