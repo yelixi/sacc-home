@@ -38,4 +38,6 @@ public interface UserService {
     CommonResult registerAll(String address);
 
     boolean authorize(String username,String role);
+
+    List<User> getAllUser(String token);
 }

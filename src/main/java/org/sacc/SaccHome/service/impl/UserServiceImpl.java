@@ -1,6 +1,7 @@
 package org.sacc.SaccHome.service.Impl;
 
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.jwt.Claims;
 import lombok.SneakyThrows;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,6 +19,7 @@ import org.sacc.SaccHome.service.EmailService;
 import org.sacc.SaccHome.service.UserService;
 import org.sacc.SaccHome.util.Email;
 import org.sacc.SaccHome.util.JwtToken;
+import org.sacc.SaccHome.util.RoleUtil;
 import org.sacc.SaccHome.util.VerificationCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -52,6 +54,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private RoleUtil roleUtil;
     @Override
     public User getUser(Integer id) {
         User user = userMapper.selectByPrimaryKey(id);
@@ -302,5 +307,13 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectUser(username).get(0);
         user.setRole(role);
         return userMapper.updateByPrimaryKeySelective(user)==1;
+    }
+
+    @Override
+    public List<User> getAllUser(String token) {
+        if(roleUtil.hasRole(token,RoleEnum.ROOT)){
+            return userMapper.selectAll();
+        }
+        else throw new BusinessException(ResultCode.FORBIDDEN);
     }
 }

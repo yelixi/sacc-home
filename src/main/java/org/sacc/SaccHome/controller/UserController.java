@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -155,5 +156,10 @@ public class UserController {
             return CommonResult.success(userService.authorize(username, role));
         } else
             return CommonResult.unauthorized(null);
+    }
+
+    @GetMapping("/getAllUser")
+    public CommonResult<List<User>> getAllUser(@RequestHeader String token){
+        return CommonResult.success(userService.getAllUser(token));
     }
 }
