@@ -37,5 +37,5 @@ public interface UserService {
 
     CommonResult registerAll(String address);
 
-    boolean authorize(Integer userId,String role);
+    boolean authorize(String username,String role);
 }

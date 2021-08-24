@@ -150,9 +150,9 @@ public class UserController {
     }
 
     @PostMapping("/authorize")
-    public CommonResult<Boolean> authorize(@RequestParam Integer userId, @RequestParam String role, @RequestHeader String token) {
+    public CommonResult<Boolean> authorize(@RequestParam String username, @RequestParam String role, @RequestHeader String token) {
         if (roleUtil.hasRole(token, RoleEnum.ROOT)) {
-            return CommonResult.success(userService.authorize(userId, role));
+            return CommonResult.success(userService.authorize(username, role));
         } else
             return CommonResult.unauthorized(null);
     }

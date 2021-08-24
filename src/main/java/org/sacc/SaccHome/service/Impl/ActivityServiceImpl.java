@@ -113,6 +113,7 @@ public class ActivityServiceImpl implements ActivityService {
         MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
         minioClient.statObject(bucketname, activity.getActivityName());
         minioClient.removeObject(bucketname, activity.getActivityName());
+        activityMapper.deleteByPrimaryKey(activityId);
         return true;
     }
 

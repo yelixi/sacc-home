@@ -296,11 +296,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authorize(Integer userId, String role) {
+    public boolean authorize(String username, String role) {
         if(!RoleEnum.isExist(role))
             throw new BusinessException(ResultCode.TOKEN_IS_NOT_EXIT);
-        User user = new User();
-        user.setId(userId);
+        User user = userMapper.selectUser(username).get(0);
         user.setRole(role);
         return userMapper.updateByPrimaryKeySelective(user)==1;
     }
