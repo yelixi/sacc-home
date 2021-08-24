@@ -3,7 +3,6 @@ package org.sacc.SaccHome.service.Impl;
 
 
 import io.jsonwebtoken.Claims;
-import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.mbg.mapper.OrderMapper;
 import org.sacc.SaccHome.mbg.mapper.UserMapper;
 import org.sacc.SaccHome.mbg.model.Order;
@@ -16,12 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+
 @Service
 public class OrderServiceImpl implements OrderService {
     @Autowired
@@ -38,7 +36,12 @@ public class OrderServiceImpl implements OrderService {
         PageParam pageParam = new PageParam();
         Page<Order> page = new Page<Order>();
         pageParam.setCurrentPage(currentPage);
-        page.setList(ordermapper.find(pageParam));
+        List<Order> orders = ordermapper.find(pageParam);
+        for (Order order : orders) {      //将返回的order中的时间的秒数删除
+            order.setStartTime(order.getStartTime().substring(0,16));
+            order.setEndTime(order.getEndTime().substring(0,16));
+        }
+        page.setList(orders);
         page.setCurrentPage(currentPage);
         page.setTotalNumber(ordermapper.getCount());
         if(ordermapper.getCount() % pageParam.getPageSize()==0){
