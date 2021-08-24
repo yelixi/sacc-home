@@ -6,17 +6,22 @@ import io.swagger.annotations.ApiOperation;
 
 import org.sacc.SaccHome.api.CommonResult;
 import org.sacc.SaccHome.enums.RoleEnum;
+import org.sacc.SaccHome.mbg.model.File;
 import org.sacc.SaccHome.mbg.model.FileTask;
 import org.sacc.SaccHome.mbg.model.StatusResult;
+import org.sacc.SaccHome.mbg.model.TaskDetails;
 import org.sacc.SaccHome.service.FileTaskService;
 import org.sacc.SaccHome.util.RoleUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -32,7 +37,6 @@ public class FileTaskController {
     private FileTaskService fileTaskService;
     @Autowired
     private RoleUtil roleUtil;
-
 
 
     @ApiOperation(value = "获取文件任务")
@@ -57,14 +61,28 @@ public class FileTaskController {
     @RequestMapping(value = "/createFileTask", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult createFileTask(@RequestBody FileTask fileTask,@RequestHeader String token) {
+        //只需要传 任务名称 命名规则 截止时间
         if(roleUtil.hasAnyRole(token, RoleEnum.MEMBER,RoleEnum.ADMIN,RoleEnum.ROOT)) {
+            if(fileTask.getName() == null || fileTask.getName().length() <= 0){
+                return CommonResult.failed("文件任务名不可为空");
+            }
+            if(fileTask.getRule()==null||fileTask.getRule().length()<=0){
+                return CommonResult.failed("命名规则不可为空");
+            }
+            LocalDateTime now = LocalDateTime.now();
+            if(now.isAfter(fileTask.getDeadline())){
+                return CommonResult.failed("截止时间不可以在当前时间之前");
+            }
+            if (fileTask.getDeadline()==null){
+                return CommonResult.failed("截止时间不可为空");
+            }
             fileTask.setUserId(fileTaskService.getUserIdByToken(token));
             fileTask.setCreatedAt(LocalDateTime.now());
             fileTask.setUpdatedAt(LocalDateTime.now());
             int var = fileTaskService.createFileTask(fileTask);
             if (var == 1) {
                 logger.info("文件任务创建成功");
-                return CommonResult.success(fileTask);
+                return CommonResult.success(fileTask.getId(),"创建文件任务成功");
             } else {
                 logger.info("文件任务创建失败");
                 return CommonResult.failed("文件任务创建失败");
@@ -77,7 +95,7 @@ public class FileTaskController {
     @ApiOperation(value = "删除文件任务")
     @RequestMapping(value = "/deleteFileTask", method = RequestMethod.DELETE)
     @ResponseBody
-    public CommonResult deleteFileTask(@RequestParam("id") Integer id,@RequestParam int userId,@RequestHeader String token) {
+    public CommonResult deleteFileTask(@RequestParam("id") Integer id,@RequestHeader String token) {
         if(roleUtil.hasAnyRole(token, RoleEnum.ADMIN,RoleEnum.ROOT)) {
             FileTask fileTask = fileTaskService.getFileTask(id);
             if (fileTask == null) {
@@ -95,6 +113,9 @@ public class FileTaskController {
             }
         }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
             int userIdByToken=fileTaskService.getUserIdByToken(token);
+            FileTask fileTask = fileTaskService.getFileTask(id);
+            int userId=fileTask.getUserId();
+
             if(userId==userIdByToken) {
                 int i = fileTaskService.deleteFileTask(id);
                 if (i == 1) {
@@ -118,7 +139,22 @@ public class FileTaskController {
     @ResponseBody
     public CommonResult updateFileTask(@RequestParam("id") Integer id, @RequestBody
             FileTask fileTask,@RequestHeader String token) {
+        //传 文件任务名 命名规则 截止时间
+        if(fileTask.getName() == null || fileTask.getName().length() <= 0){
+            return CommonResult.failed("文件任务名不可为空");
+        }
+        if(fileTask.getRule()==null||fileTask.getRule().length()<=0){
+            return CommonResult.failed("命名规则不可为空");
+        }
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isAfter(fileTask.getDeadline())){
+            return CommonResult.failed("截止时间不可以在当前时间之前");
+        }
+        if (fileTask.getDeadline()==null){
+            return CommonResult.failed("截止时间不可为空");
+        }
         if(roleUtil.hasAnyRole(token, RoleEnum.ADMIN,RoleEnum.ROOT)) {
+
             int i = fileTaskService.updateFileTask(id, fileTask);
             if (i == 1) {
                 logger.info("文件任务更新成功");
@@ -129,8 +165,10 @@ public class FileTaskController {
             }
         }else if(roleUtil.hasRole(token,RoleEnum.MEMBER)){
             int userIdByToken=fileTaskService.getUserIdByToken(token);
-            int userId=fileTask.getUserId();
-            if(userId==userIdByToken){
+            FileTask fileTask1 = fileTaskService.getFileTask(id);
+
+            if(fileTask1.getUserId()==userIdByToken){
+                fileTask.setUserId(userIdByToken);
                 int i = fileTaskService.updateFileTask(id, fileTask);
                 if (i == 1) {
                     logger.info("文件任务更新成功");
@@ -147,28 +185,78 @@ public class FileTaskController {
         }
     }
 
-    @ApiOperation(value = "获取文件任务状态")
-    @RequestMapping(value = "/getFileTaskStatus", method = RequestMethod.GET)
+    @ApiOperation(value = "获取发布的所有文件任务")
+    @RequestMapping(value = "/listFileTasksByTimeAsc", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<StatusResult> getFileTaskStatus(@RequestParam("id") Integer id,@RequestParam int userId, @RequestHeader String token) {
-        //获取剩余时间
-        if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT)) {
-            StatusResult statusResult = fileTaskService.getFileTaskStatus(id);
-            return CommonResult.success(statusResult, "获取文件任务状态成功");
+    public CommonResult<List<StatusResult>> listFileTaskByTimeAsc(@RequestHeader String token) {
+        if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT, RoleEnum.MEMBER)) {
+            List<FileTask> fileTasks = fileTaskService.listFileTasksByIdByTimeAsc(token);
+            List<StatusResult> list = new ArrayList<>();
 
-        }else if(roleUtil.hasRole(token, RoleEnum.MEMBER)){
-            int userIdByToken=fileTaskService.getUserIdByToken(token);
-            if(userId==userIdByToken){
-               StatusResult statusResult=fileTaskService.getFileTaskStatus(id);
-               if(statusResult==null){
-                   return CommonResult.failed("获取文件任务状态失败");
-               }
-                return CommonResult.success(statusResult,"获取文件任务状态成功");
-            }else{
-                return CommonResult.failed("此文件任务非您创建,不可获取");
+            for (FileTask fileTask : fileTasks) {
+                int id = fileTask.getId();
+                StatusResult fileTaskStatus = fileTaskService.getFileTaskStatus(id);
+                list.add(fileTaskStatus);
             }
-        }else{
+            return CommonResult.success(list, "获取文件任务成功");
+        } else {
             return CommonResult.unauthorized(null);
         }
     }
+    @ApiOperation(value = "获取发布的所有文件任务")
+    @RequestMapping(value = "/listFileTasksByTimeDesc", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<StatusResult>> listFileTaskByTimeDesc(@RequestHeader String token) {
+        if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT, RoleEnum.MEMBER)) {
+            List<FileTask> fileTasks = fileTaskService.listFileTasksByIdByTimeDesc(token);
+            List<StatusResult> list=new ArrayList<>();
+            for (FileTask fileTask:fileTasks){
+                int id= fileTask.getId();
+                StatusResult fileTaskStatus = fileTaskService.getFileTaskStatus(id);
+                list.add(fileTaskStatus);
+            }
+            return CommonResult.success(list,"获取文件任务成功");
+        }else {
+            return CommonResult.unauthorized(null);
+        }
+
+
+
+    }
+
+    @ApiOperation(value = "获取已经提交的文件和提交的用户信息")
+    @RequestMapping(value = "/listDetailsByTaskId", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<TaskDetails> listFilesByTaskId(@RequestParam("id") Integer id, @RequestHeader String token) {
+        //需登录
+        if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT)){
+            //特权
+            TaskDetails details = fileTaskService.getDetails(id);
+            return CommonResult.success(details,"成功获取用户任务详情");
+        }else if(roleUtil.hasAnyRole(token,RoleEnum.MEMBER)){
+            FileTask fileTask1 = fileTaskService.getFileTask(id);
+            if(fileTask1==null){
+                return CommonResult.failed("该文件任务不存在");
+            }
+            //通过token获取自己发布的文件任务
+            List<FileTask> fileTasks = fileTaskService.listFileTasksByIdByTimeDesc(token);
+            boolean belong=false;
+            for(FileTask fileTask:fileTasks){
+                int taskId=fileTask.getId();
+                if(taskId==id){
+                    belong=true;
+                }
+            }
+            if(belong==false){
+                return CommonResult.failed("不是自己发布的文件任务详情不可获取");
+            }
+            TaskDetails details = fileTaskService.getDetails(id);
+
+            return CommonResult.success(details,"成功获取用户任务详情");
+        }else {
+            return CommonResult.unauthorized(null);
+        }
+
+    }
+
 }

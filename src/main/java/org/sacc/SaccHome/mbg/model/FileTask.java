@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class FileTask {
+
     @ApiModelProperty(value = "文件任务id")
     private Integer id;
-
     @ApiModelProperty(value = "任务名称")
     private String name;
     @ApiModelProperty(value = "发起人")
