@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -159,7 +160,7 @@ public class UserInfoController {
     }
 
     @GetMapping("/getAvatar")
-    public CommonResult<String> getAvatar(@RequestHeader String token){
+    public CommonResult<Map<String,String>> getAvatar(@RequestHeader String token){
         return CommonResult.success(userInfoService.getAvatar(token));
     }
 }

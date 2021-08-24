@@ -3,6 +3,8 @@ package org.sacc.SaccHome.service;
 import org.sacc.SaccHome.mbg.model.UserInfo;
 import org.sacc.SaccHome.vo.UserInfoVo;
 
+import java.util.Map;
+
 /**
  * Created by 林夕
  * Date 2021/8/9 19:34
@@ -17,5 +19,5 @@ public interface UserInfoService {
 
     String uploadAvatar(String username,String url);
 
-    String getAvatar(String token);
+    Map<String,String> getAvatar(String token);
 }

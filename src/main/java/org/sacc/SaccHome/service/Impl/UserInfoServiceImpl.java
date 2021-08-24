@@ -11,6 +11,8 @@ import org.sacc.SaccHome.vo.UserInfoVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 林夕
@@ -77,11 +79,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public String getAvatar(String token) {
+    public Map<String,String> getAvatar(String token) {
+        Map<String,String> map = new HashMap<>();
         Claims claim = jwtToken.getClaimByToken(token);
         String username = (String) claim.get("username");
         User u = userService.getUserInfo(username);
         UserInfo userInfo = userInfoMapper.selectByUserId(u.getId());
-        return userInfo.getImgUrl();
+        map.put("avatar",userInfo.getImgUrl());
+        map.put("username",username);
+        return map;
     }
 }
