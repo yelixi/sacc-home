@@ -236,12 +236,12 @@ public class FileController {
 
     }
 
-    @GetMapping(value = "list")
+    @GetMapping(value = "/list")
     public List<File> List(){
         return fileMapper.selectList();
     }
 
-    @GetMapping(value = "downloadzip")
+    @GetMapping(value = "/downloadzip")
     public CommonResult<String> DownZip(@RequestParam("bucketname") String bucketname,HttpServletResponse response) throws InvalidPortException, InvalidEndpointException {
         try{
             MinioClient minioClient = new MinioClient("http://platform.sacc.fit", "minioadmin", "minioadmin");
