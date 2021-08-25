@@ -98,4 +98,5 @@ public interface UserMapper {
 
     @Select("SELECT id,username,email,role FROM user")
     List<User> selectAll();
+
 }

@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="org.sacc.SaccHome.mbg.model.File">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="file_name" jdbcType="VARCHAR" property="fileName" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="userName" />
     <result column="file_task_id" jdbcType="INTEGER" property="fileTaskId" />
     <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.sacc.SaccHome.mbg.model.File;
 import org.sacc.SaccHome.mbg.model.FileTask;
 import org.sacc.SaccHome.mbg.model.FileTaskExample;
 import org.springframework.stereotype.Component;
@@ -31,4 +32,6 @@ public interface FileTaskMapper {
     int updateByPrimaryKeySelective(FileTask record);
 
     int updateByPrimaryKey(FileTask record);
+
+    List<File> getFilesByFileTaskId(Integer id);
 }

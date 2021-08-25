@@ -13,9 +13,6 @@ public class File {
     private Integer id;
     @ApiModelProperty("文件名")
     private String fileName;
-
-    @ApiModelProperty(value = "用户id")
-    private Integer userId;
     @ApiModelProperty(value = "属于的文件任务id")
     private Integer fileTaskId;
     @ApiModelProperty(value = "文件路径")
@@ -24,6 +21,8 @@ public class File {
     private LocalDateTime createdAt;
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updatedAt;
+    @ApiModelProperty(value = "用户名")
+    private String  userName;
 
 
 }

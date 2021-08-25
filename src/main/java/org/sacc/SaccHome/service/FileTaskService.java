@@ -33,6 +33,6 @@ public interface FileTaskService {
     List<FileTask> listFileTasksByIdByTimeDesc(String token);
 
     //获取已经提交的文件
-    TaskDetails getDetails(Integer fileTaskId);
+    List<File> getDetails(Integer fileTaskId);
 
 }

@@ -13,10 +13,9 @@
 <select id="getUsersByFileTask" parameterType="java.lang.Integer" resultMap="BaseResultMap">
      select *
      from user
-     left join file on file.user_id = user.id
+     left join file on file.username = user.username
      left join file_task on file.file_task_id = file_task.id
      where file_task.id =#{id,jdbcType=INTEGER}
-
 </select>
 
 </mapper>
