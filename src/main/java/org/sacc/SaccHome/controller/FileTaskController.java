@@ -1,6 +1,5 @@
 package org.sacc.SaccHome.controller;
 
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-
 /**
  * created by weiwo
  *
@@ -219,19 +216,15 @@ public class FileTaskController {
         }else {
             return CommonResult.unauthorized(null);
         }
-
-
-
     }
-
     @ApiOperation(value = "获取已经提交的文件和提交的用户信息")
     @RequestMapping(value = "/listDetailsByTaskId", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<TaskDetails> listFilesByTaskId(@RequestParam("id") Integer id, @RequestHeader String token) {
+    public CommonResult<List<File>> listFilesByTaskId(@RequestParam("id") Integer id, @RequestHeader String token) {
         //需登录
         if (roleUtil.hasAnyRole(token, RoleEnum.ADMIN, RoleEnum.ROOT)){
             //特权
-            TaskDetails details = fileTaskService.getDetails(id);
+            List<File> details = fileTaskService.getDetails(id);
             return CommonResult.success(details,"成功获取用户任务详情");
         }else if(roleUtil.hasAnyRole(token,RoleEnum.MEMBER)){
             FileTask fileTask1 = fileTaskService.getFileTask(id);
@@ -250,7 +243,7 @@ public class FileTaskController {
             if(belong==false){
                 return CommonResult.failed("不是自己发布的文件任务详情不可获取");
             }
-            TaskDetails details = fileTaskService.getDetails(id);
+            List<File> details = fileTaskService.getDetails(id);
 
             return CommonResult.success(details,"成功获取用户任务详情");
         }else {

@@ -53,7 +53,6 @@ public class FileTaskServiceImpl implements FileTaskService {
     public StatusResult getFileTaskStatus(Integer id) {
         StatusResult statusResult = new StatusResult();
         FileTask fileTask = fileTaskService.getFileTask(id);
-        Integer userId = fileTask.getUserId();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime deadline = fileTask.getDeadline();
         Duration duration = Duration.between(now, deadline);
@@ -145,22 +144,24 @@ public class FileTaskServiceImpl implements FileTaskService {
     }
 
     @Override
-    public TaskDetails getDetails(Integer fileTaskId) {
-        FileExample example=new FileExample();
-        example.createCriteria().andFileTaskIdEqualTo(fileTaskId);
-        List<File> files = fileMapper.selectByExample(example);
-        List<User> users = userService.getUsersByFileTask(fileTaskId);
-        List<UserParam> userParams = new ArrayList<>();
-        for (User user : users) {
-            UserParam userParam = new UserParam();
-            userParam.setId(user.getId());
-            userParam.setUseName(user.getUsername());
-            userParams.add(userParam);
-        }
-        TaskDetails taskDetails=new TaskDetails();
-        taskDetails.setFiles(files);
-        taskDetails.setUserInfos(userParams);
-        return taskDetails;
+    public List<File> getDetails(Integer fileTaskId) {
+//        FileExample example=new FileExample();
+//        example.createCriteria().andFileTaskIdEqualTo(fileTaskId);
+//        List<File> files = fileMapper.selectByExample(example);
+        //通过文件任务id获取文件
+        List<File> files = fileTaskMapper.getFilesByFileTaskId(fileTaskId);
+//        List<User> users = userService.getUsersByFileTask(fileTaskId);
+//        List<UserParam> userParams = new ArrayList<>();
+//        for (User user : users) {
+//            UserParam userParam = new UserParam();
+//            userParam.setId(user.getId());
+//            userParam.setUseName(user.getUsername());
+//            userParams.add(userParam);
+//        }
+//        TaskDetails taskDetails=new TaskDetails();
+//        taskDetails.setFiles(files);
+//        taskDetails.setUserInfos(userParams);
+        return files;
     }
 
 

@@ -240,4 +240,9 @@
       deadline = #{deadline,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="getFilesByFileTaskId" parameterType="java.lang.Integer"  resultType="org.sacc.SaccHome.mbg.model.File">
+   select *
+   from file
+   where  file.file_task_id=#{id,jdbcType=INTEGER}
+  </select>
 </mapper>
