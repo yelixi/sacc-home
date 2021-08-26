@@ -147,12 +147,8 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public CommonResult<Object> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public CommonResult<Object> upload(MultipartFile file,@RequestParam String bucketname,@RequestParam Integer fileTaskId,@RequestParam String username)throws XmlPullParserException, NoSuchAlgorithmException, IOException, InvalidKeyException {
         FileTask fileTask = fileTaskService.getFileTask(fileTaskId);
-//        Claims claimByToken = jwtToken.getClaimByToken(token);
-//        String username = (String)claimByToken.get("username");
-//        UserInfoVo aThis = userInfoService.getThis(username);
-//        int i = aThis.getId();
         String fileName = file.getOriginalFilename();
         assert fileName != null;
         String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -172,6 +168,7 @@ public class FileController {
             System.out.println("ok");
             String url = "http://116.62.110.191:8888" + "/download/" + "?"+"bucketname" + "=" + bucketname +"&" + "filename"+ "=" +URLEncoder.encode(newFileName.toString());
             File f = new File();
+            f.setUsername(username);
             f.setPath(url);
             f.setFileName(newFileName);
             f.setFileTaskId(fileTaskId);

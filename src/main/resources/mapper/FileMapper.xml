@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="org.sacc.SaccHome.mbg.model.File">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="file_name" jdbcType="VARCHAR" property="fileName" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="file_task_id" jdbcType="INTEGER" property="fileTaskId" />
     <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, file_name, user_id, file_task_id, path, created_at, updated_at
+    id, file_name, username, file_task_id, path, created_at, updated_at
   </sql>
   <select id="selectByExample" parameterType="org.sacc.SaccHome.mbg.model.FileExample" resultMap="BaseResultMap">
     select
@@ -105,10 +105,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into file (file_name, user_id, file_task_id,
+    insert into file (file_name, username, file_task_id,
       path, created_at, updated_at
       )
-    values (#{fileName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{fileTaskId,jdbcType=INTEGER},
+    values (#{fileName,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{fileTaskId,jdbcType=INTEGER},
       #{path,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -121,8 +121,8 @@
       <if test="fileName != null">
         file_name,
       </if>
-      <if test="userId != null">
-        user_id,
+      <if test="username != null">
+        username,
       </if>
       <if test="fileTaskId != null">
         file_task_id,
@@ -141,8 +141,8 @@
       <if test="fileName != null">
         #{fileName,jdbcType=VARCHAR},
       </if>
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
       </if>
       <if test="fileTaskId != null">
         #{fileTaskId,jdbcType=INTEGER},
@@ -173,8 +173,8 @@
       <if test="record.fileName != null">
         file_name = #{record.fileName,jdbcType=VARCHAR},
       </if>
-      <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=INTEGER},
+      <if test="record.username != null">
+        username = #{record.username,jdbcType=VARCHAR},
       </if>
       <if test="record.fileTaskId != null">
         file_task_id = #{record.fileTaskId,jdbcType=INTEGER},
@@ -197,7 +197,7 @@
     update file
     set id = #{record.id,jdbcType=INTEGER},
       file_name = #{record.fileName,jdbcType=VARCHAR},
-      user_id = #{record.userId,jdbcType=INTEGER},
+      username = #{record.username,jdbcType=VARCHAR},
       file_task_id = #{record.fileTaskId,jdbcType=INTEGER},
       path = #{record.path,jdbcType=VARCHAR},
       created_at = #{record.createdAt,jdbcType=TIMESTAMP},
@@ -212,8 +212,8 @@
       <if test="fileName != null">
         file_name = #{fileName,jdbcType=VARCHAR},
       </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=INTEGER},
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
       </if>
       <if test="fileTaskId != null">
         file_task_id = #{fileTaskId,jdbcType=INTEGER},
@@ -233,7 +233,7 @@
   <update id="updateByPrimaryKey" parameterType="org.sacc.SaccHome.mbg.model.File">
     update file
     set file_name = #{fileName,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=INTEGER},
+      username = #{username,jdbcType=VARCHAR},
       file_task_id = #{fileTaskId,jdbcType=INTEGER},
       path = #{path,jdbcType=VARCHAR},
       created_at = #{createdAt,jdbcType=TIMESTAMP},

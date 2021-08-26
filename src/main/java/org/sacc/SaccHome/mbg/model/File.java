@@ -14,8 +14,8 @@ public class File {
     @ApiModelProperty("文件名")
     private String fileName;
 
-    @ApiModelProperty(value = "用户id")
-    private Integer userId;
+    @ApiModelProperty(value = "用户名")
+    private String username;
     @ApiModelProperty(value = "属于的文件任务id")
     private Integer fileTaskId;
     @ApiModelProperty(value = "文件路径")
